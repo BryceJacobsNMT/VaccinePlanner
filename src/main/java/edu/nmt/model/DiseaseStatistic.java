@@ -11,6 +11,7 @@ package edu.nmt.model;
  * @author bryce
  */
 public class DiseaseStatistic {
+    private long id;
     private float infectionRate;
     private float hospitalizationRate;
     private float deathRate;

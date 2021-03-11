@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="edu.nmt.model">
+
+  <class name="edu.nmt.model.Population">
+    
+    <id name="Id" type="long">
+      <generator class="native"/>
+    </id>
+    <property name="ChronicMedicalConditionPercent"/>
+    <property name="IncreasedRiskPercent"/>
+    <property name="SevereIllnessPercent"/>
+ 
+    <map name="RacialMix" table="RacialMix">
+      <key not-null="true" column = "population_id" type="long"/>
+      <map-key column="racial_category" type="string"/>
+      <one-to-many column="percent" type="float" not-null="true"/>
+    </map>
+    
+    <map name="AgeMix" table="AgeGroup">
+        <key not-null="true" column="population_id" type="long"/>
+        <map-key column="age_group" type="string"/>
+        <one-to-many column="percent" type="float" not-null="true"/>
+    </map>
+    
+   </class>
+    
+</hibernate-mapping>
