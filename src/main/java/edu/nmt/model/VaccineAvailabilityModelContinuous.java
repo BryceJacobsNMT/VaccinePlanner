@@ -17,7 +17,7 @@ public class VaccineAvailabilityModelContinuous implements VaccineAvailabilityMo
     private float growthFactor;
     private long id;
     
-    private VaccineAvailabilityModelContinuous(VaccineContinuousModelType modelType,  int initial, float growthFactor ){
+    public VaccineAvailabilityModelContinuous(VaccineContinuousModelType modelType,  int initial, float growthFactor ){
         this.modelType = modelType;
         initialAmount = initial;
         this.growthFactor = growthFactor;
