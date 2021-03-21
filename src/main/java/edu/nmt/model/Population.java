@@ -5,8 +5,10 @@
  */
 package edu.nmt.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,14 +21,17 @@ import javax.persistence.Table;
  */
 @Entity
 @Table( name="population")
-public class Population {
+public class Population implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
+  
     private float chronicMedicalConditionPercent;
     private float increasedRiskPercent;
     private float severeIllnessPercent;
+    @ElementCollection
     private final Map<RacialCategory,Float> racialMix;
+    @ElementCollection
     private final Map<AgeGroup,Float> ageMix;
     
     /**
@@ -54,6 +59,7 @@ public class Population {
         return increasedRiskPercent;
     }
     
+  
     public float getSevereIllnessPercent(){
         return severeIllnessPercent;
     }
@@ -87,9 +93,59 @@ public class Population {
         this.ageMix.putAll( ageMix );
     }
     
+  
     public void setRacialMix( Map<RacialCategory,Float> racialMix ){
          this.racialMix.clear();
         this.racialMix.putAll( racialMix );
+    }
+    
+    @Override
+    public boolean equals( Object other ){
+        boolean result = false;
+        if ( other instanceof Population ){
+            Population otherPop = (Population)other;
+            final double ERR = 0.000001;
+            if ( Math.abs(chronicMedicalConditionPercent - otherPop.chronicMedicalConditionPercent) < ERR ){
+                if ( Math.abs( increasedRiskPercent - otherPop.increasedRiskPercent ) < ERR ){
+                    if ( Math.abs( severeIllnessPercent - otherPop.severeIllnessPercent ) < ERR ){
+                        if ( racialMix.equals( otherPop.racialMix)){
+                            if (ageMix.equals( otherPop.ageMix)){
+                                result = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    
+    @Override
+    public int hashCode(){
+        final int MULT = 5;
+        int base = Float.hashCode(chronicMedicalConditionPercent );
+        base = MULT * base + Float.hashCode( increasedRiskPercent );
+        base = MULT * base + Float.hashCode( severeIllnessPercent );
+        if ( racialMix != null ){
+            base = MULT * base + racialMix.hashCode();
+       }
+        if ( ageMix != null ){
+            base = MULT * base + ageMix.hashCode();
+            
+       }
+       return base;       
+    }
+    
+    @Override
+    public String toString(){
+        final String EOL = "\n";
+        StringBuilder build = new StringBuilder();
+        build.append( "Chronic Medical Condition Percent: ").append( chronicMedicalConditionPercent ).append(EOL);
+        build.append( "Increased Risk Percent: ").append( increasedRiskPercent ).append( EOL );
+        build.append( "Severe Illness Percent: ").append( severeIllnessPercent ).append( EOL );
+        build.append( "Racial Mix: ").append( racialMix ).append( EOL );
+        build.append( "Age Mix: ").append( ageMix ).append( EOL );
+        return build.toString();
     }
     
     
