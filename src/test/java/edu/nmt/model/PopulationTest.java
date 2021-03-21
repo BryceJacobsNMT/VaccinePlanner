@@ -16,8 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
- * @author susan
+ *  Test the Population Model.
  */
 public class PopulationTest {
     
@@ -40,9 +39,9 @@ public class PopulationTest {
     public void tearDown() {
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
+    /**
+     * Tests that a population can be written to the database.
+     */
     @Test
     public void testPopulationSave() {
         //Create a population
