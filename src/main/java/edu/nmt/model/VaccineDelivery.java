@@ -13,13 +13,13 @@ import java.util.Map;
  * @author bryce
  */
 public class VaccineDelivery {
-    private Map<Vaccine, VaccineAvailabilityModelContinuous> vaccineAvailability;
+    private Map<Vaccine, VaccineAvailabilityModel> vaccineAvailability;
     
     public VaccineDelivery(  ){
        vaccineAvailability = new HashMap<>();
     }
     
-    public void addVaccineSource( Vaccine vaccine, VaccineAvailabilityModelContinuous availabilityModel ){
+    public void addVaccineSource( Vaccine vaccine, VaccineAvailabilityModel availabilityModel ){
         assert( vaccine != null );
         assert( availabilityModel != null );
         vaccineAvailability.put( vaccine, availabilityModel);
@@ -28,7 +28,7 @@ public class VaccineDelivery {
     public int getDoses( int elapsedDays, Vaccine vac ){
         int doses = 0;
         if ( vaccineAvailability.containsKey(vac)){
-            VaccineAvailabilityModelContinuous availModel = vaccineAvailability.get(vac);
+            VaccineAvailabilityModel availModel = vaccineAvailability.get(vac);
             doses = availModel.getDoses( elapsedDays );
         }
         return doses;
