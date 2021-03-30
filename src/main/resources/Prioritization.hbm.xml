@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="edu.nmt.model">
+   
+  <class name="edu.nmt.model.Prioritization">
+    
+    <id name="Id" type="long">
+      <generator class="native"/>
+    </id>
+   
+    private final Map<AgeGroup,PriorityGroup> agePriority;
+    <map name="OccupationPriority" table="OccupationPriority">
+      <key not-null="true" column = "prioritization_id" type="long"/>
+      <map-key column="occupation" type="string"/>
+      <one-to-many column="priority_group" 
+           type="string"
+           outer-join="true"
+           lazy="false"
+           cascade="save-update,persist,merge,evict,replicate,lock,refresh" 
+           not-null="true"/>
+    </map>
+    
+    <map name="IncreasedRiskPriority" table="IncreasedRiskPriority">
+        <key not-null="true" column="prioritization_id" type="long"/>
+        <map-key column="increased_risk" type="string"/>
+        <one-to-many 
+            column="priority_group"
+            type="string"
+            outer-join="true"
+            lazy="false"
+            cascade="save-update,persist,merge,evict,replicate,lock,refresh" 
+            not-null="true"/>
+    </map>
+    
+     <map name="SevereIllnessPriority" table="SevereIllnessPriority">
+        <key not-null="true" column="prioritization_id" type="long"/>
+        <map-key column="severe_illness" type="string"/>
+        <one-to-many column="priority_group" 
+            type="string"
+            outer-join="true"
+            lazy="false"
+            cascade="save-update,persist,merge,evict,replicate,lock,refresh" 
+            not-null="true"/>
+    </map>
+    
+     <map name="RacialPriority" table="RacialPriority">
+        <key not-null="true" column="prioritization_id" type="long"/>
+        <map-key column="racial_category" type="string"/>
+        <one-to-many column="priority_group" 
+            type="string"
+            outer-join="true"
+            lazy="false"
+            cascade="save-update,persist,merge,evict,replicate,lock,refresh"          
+            not-null="true"/>
+    </map>
+    
+     <map name="AgePriority" table="AgePriority">
+        <key not-null="true" column="prioritization_id" type="long"/>
+        <map-key column="age_group" type="string"/>
+        <one-to-many column="priority_group" 
+            type="string"
+            outer-join="true"
+            lazy="false"
+            cascade="save-update,persist,merge,evict,replicate,lock,refresh" 
+            not-null="true"/>
+    </map>    
+   </class>
+   
+
+    
+</hibernate-mapping>

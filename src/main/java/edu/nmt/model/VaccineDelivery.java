@@ -5,21 +5,50 @@
  */
 package edu.nmt.model;
 
+import edu.nmt.util.ObjectUtility;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  *
  * @author bryce
  */
-public class VaccineDelivery {
-    private Map<Vaccine, VaccineAvailabilityModel> vaccineAvailability;
+@Entity
+@Table( name="vaccinedelivery")
+public class VaccineDelivery implements Serializable {
+    
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private long id;
+    @ElementCollection
+    private Map<Vaccine, VaccineAvailabilityModelContinuous> vaccineAvailability;
+    
     
     public VaccineDelivery(  ){
        vaccineAvailability = new HashMap<>();
     }
     
-    public void addVaccineSource( Vaccine vaccine, VaccineAvailabilityModel availabilityModel ){
+    public long getId(){
+        return id;
+    }
+    
+    public Map<Vaccine, VaccineAvailabilityModelContinuous> getVaccineAvailability(){
+        return vaccineAvailability;
+    }
+    
+    
+    private void setId( long id ){
+        this.id = id;
+    }
+    
+    public void addVaccineSource( Vaccine vaccine, VaccineAvailabilityModelContinuous availabilityModel ){
         assert( vaccine != null );
         assert( availabilityModel != null );
         vaccineAvailability.put( vaccine, availabilityModel);
@@ -32,5 +61,28 @@ public class VaccineDelivery {
             doses = availModel.getDoses( elapsedDays );
         }
         return doses;
+    }
+    
+    public void setVaccineAvailability( Map<Vaccine, VaccineAvailabilityModelContinuous> model ){
+        this.vaccineAvailability = model;
+    }
+    
+   
+    @Override
+    public boolean equals( Object o ){
+        boolean equalObs = false;
+        if ( o instanceof VaccineDelivery ){
+            VaccineDelivery vc = (VaccineDelivery)o;
+            if ( ObjectUtility.objectsAreEqual( this.vaccineAvailability, vc.vaccineAvailability )){
+                equalObs = true;
+            }
+        }
+        return equalObs;
+    }
+    
+    @Override
+    public int hashCode(){
+        int base = ObjectUtility.hashCode( vaccineAvailability);
+       return base;  
     }
 }

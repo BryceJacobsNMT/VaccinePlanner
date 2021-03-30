@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="edu.nmt.model">
+   
+  <class name="edu.nmt.model.Disease">
+    
+    <id name="Id" type="long">
+      <generator class="native"/>
+    </id>
+   
+    
+    <map name="OccupationDisease" table="OccupationDisease">
+      <key not-null="true" column = "disease_id" type="long"/>
+      <map-key column="occupation" type="string"/>
+      <one-to-many column="disease_statistic_id" 
+           class="edu.nmt.model.DiseaseStatistic"
+           outer-join="true"
+           lazy="false"
+           cascade="save-update,persist,merge,evict,replicate,lock,refresh" 
+           not-null="true"/>
+    </map>
+    
+    <map name="IncreasedRiskDisease" table="IncreasedRiskDisease">
+        <key not-null="true" column="disease_id" type="long"/>
+        <map-key column="severe_illness" type="string"/>
+        <one-to-many 
+            column="disease_statistic_id"
+            class="edu.nmt.model.DiseaseStatistic"
+            outer-join="true"
+            lazy="false"
+            cascade="save-update,persist,merge,evict,replicate,lock,refresh" 
+            not-null="true"/>
+    </map>
+    
+     <map name="SevereIllness" table="SevereIllnessDisease">
+        <key not-null="true" column="disease_id" type="long"/>
+        <map-key column="severe_illness" type="string"/>
+        <one-to-many column="disease_statistic_id" 
+            class="edu.nmt.model.DiseaseStatistic"
+            outer-join="true"
+            lazy="false"
+            cascade="save-update,persist,merge,evict,replicate,lock,refresh" 
+            not-null="true"/>
+    </map>
+    
+     <map name="RacialDisease" table="RacialDisease">
+        <key not-null="true" column="disease_id" type="long"/>
+        <map-key column="racial_disease" type="string"/>
+        <one-to-many column="disease_statistic_id" 
+            class="edu.nmt.model.DiseaseStatistic"
+            outer-join="true"
+            lazy="false"
+            cascade="save-update,persist,merge,evict,replicate,lock,refresh"          
+            not-null="true"/>
+    </map>
+    
+     <map name="AgeDisease" table="AgeDisease">
+        <key not-null="true" column="disease_id" type="long"/>
+        <map-key column="age_group" type="string"/>
+        <one-to-many column="disease_statistic_id" 
+            class="edu.nmt.model.DiseaseStatistic"
+            outer-join="true"
+            lazy="false"
+            cascade="save-update,persist,merge,evict,replicate,lock,refresh" 
+            not-null="true"/>
+    </map>    
+   </class>
+   
+
+    
+</hibernate-mapping>

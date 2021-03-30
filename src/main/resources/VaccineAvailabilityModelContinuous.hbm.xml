@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="edu.nmt.model">
+
+  <class name="edu.nmt.model.VaccineAvailabilityModelContinuous">
+      <property name="id" type="long"/>
+      <property name="modelType" column="model_type"/>
+      <property name="initialAmount" column="initial_amount"/>
+      <property name="growthFactor" column="growth_factor"/>
+  </class>
+
+</hibernate-mapping>

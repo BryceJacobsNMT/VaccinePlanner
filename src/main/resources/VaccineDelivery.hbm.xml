@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="edu.nmt.model">
+
+  <class name="edu.nmt.model.VaccineDelivery">
+    
+    <id name="Id" type="long">
+      <generator class="native"/>
+    </id>
+    <map name="VaccineAvailability" table="VaccineDeliveryAvailibility">
+      <key not-null="true" column = "vaccine_delivery_id" type="long"/>
+      <map-key column="vaccine" type="string"/>
+      <one-to-many column="vaccine_availability_id" 
+           class="edu.nmt.model.VaccineAvailabilityModelContinuous"
+           outer-join="true"
+           lazy="false"
+           cascade="save-update,persist,merge,evict,replicate,lock,refresh" 
+           not-null="true"/>
+    </map>
+    
+  </class>
+   
+ 
+    
+</hibernate-mapping>

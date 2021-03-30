@@ -1,5 +1,6 @@
 package edu.nmt.dao;
 
+import edu.nmt.model.Disease;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,16 +18,16 @@ import edu.nmt.model.Population;
  * A <a href="http://www.hibernate.org/">Hibernate</a>
  * data access object for {@link Population}s.
  */
-public class HibernatePopulationDao extends HibernateDao {
+public class HibernateDiseaseDao extends HibernateDao {
 
-    private static Logger LOG = LogManager.getLogger(HibernatePopulationDao.class);
+    private static Logger LOG = LogManager.getLogger(HibernateDiseaseDao.class);
 
     /**
      * Constructor.
      *
      * @see HibernateDao
      */
-    public HibernatePopulationDao() {
+    public HibernateDiseaseDao() {
     }
 
     /**
@@ -35,61 +36,61 @@ public class HibernatePopulationDao extends HibernateDao {
      * @param i - the interceptor.
      * @see HibernateDao
      */
-    public HibernatePopulationDao(String cfg, Interceptor i) {
+    public HibernateDiseaseDao(String cfg, Interceptor i) {
         super(cfg, i);
     }
 
-    synchronized public Population getPopulation(long id)
+    synchronized public Disease getDisease(long id)
             throws RepositoryException {
         try {
             Session s = getSession();
 
-            Population pop = (Population) s.get(Population.class, id);
+            Disease pop = (Disease) s.get(Disease.class, id);
             return pop;
         } 
         catch (HibernateException he) {
-            LOG.warn("Hibernate get failed for population id: " + id);
+            LOG.warn("Hibernate get failed for disease id: " + id);
             throw new RepositoryException(he);
         }
     }
 
     /**
      * @param id
-     * @return null if a Population with the provided id doesn't exist.
+     * @return null if a Disease with the provided id doesn't exist.
      * @throws edu.nmt.model.RepositoryException
      */
-    synchronized public Population findById(long id)
+    synchronized public Disease findById(long id)
             throws RepositoryException {
         try {
             Session s = getSession();
 
-            Population pop = (Population) s.get(Population.class, id);
-            return pop;
+            Disease dis = (Disease) s.get(Disease.class, id);
+            return dis;
         } 
         catch (HibernateException he) {
-            LOG.warn("Hibernate get failed for Population id: " + id);
+            LOG.warn("Hibernate get failed for Disease id: " + id);
             throw new RepositoryException(he);
         }
     }
 
     /**
-     * @param popName
-     * @return null if a Population with the provided name doesn't exist.
+     * @param disName
+     * @return null if a Disease with the provided name doesn't exist.
      * @throws edu.nmt.model.RepositoryException
      */
-    /*synchronized public Population findByName(String popName)
+    /*synchronized public Disease findByName(String disName)
             throws RepositoryException {
         try {
             Session s = getSession();
 
-            Query q = s.createQuery("from Population p where p.name = :code");
-            q.setString("name", popName);
+            Query q = s.createQuery("from Disease d where d.name = :code");
+            q.setString("name", disName);
 
-            Population pop = (Population) q.uniqueResult();
-            return pop;
+            Disease dis = (Disease) q.uniqueResult();
+            return dis;
         } 
         catch (HibernateException he) {
-            LOG.warn("Hibernate query failed while searching for Population.name: " + popName);
+            LOG.warn("Hibernate query failed while searching for Disease.name: " + disName);
             throw new RepositoryException(he);
         }
     }*/
@@ -99,45 +100,45 @@ public class HibernatePopulationDao extends HibernateDao {
      * @return @throws edu.nmt.model.RepositoryException
      */
     @SuppressWarnings("unchecked")
-    synchronized public List<Population> getAllPopulations()
+    synchronized public List<Disease> getAllDiseases()
             throws RepositoryException {
         try {
             Session s = getSession();
 
-            Query q = s.createQuery("from Population p");
+            Query q = s.createQuery("from Disease d");
 
-            List<Population> pops = new ArrayList<>();
-            pops.addAll(q.list());
+            List<Disease> dises = new ArrayList<>();
+            dises.addAll(q.list());
 
-            return pops;
+            return dises;
         } 
         catch (HibernateException he) {
-            LOG.warn("Hibernate query failed while searching for all Populations");
+            LOG.warn("Hibernate query failed while searching for all Diseases");
             throw new RepositoryException(he);
         }
     }
 
     /**
-     * Saves a population to the database.
-     * @param pop - the population to save.
+     * Saves a disease to the database.
+     * @param dis - the disease to save.
      * @throws edu.nmt.model.RepositoryException
      */
-    synchronized public void save(Population pop)
+    synchronized public void save(Disease dis)
             throws RepositoryException {
         try {
             Session s = getSession();
-            s.saveOrUpdate(pop);
+            s.saveOrUpdate(dis);
         } 
         catch (HibernateException he) {
-            LOG.warn("Failed to save Population: " + pop.getId());
+            LOG.warn("Failed to save Disease: " + dis.getId());
             rollbackTransaction();
             throw new RepositoryException(he);
         }
     }
 
     /**
-     * Deletes a population by identifier.
-     * @param id - an identifier for a population.
+     * Deletes a disease by identifier.
+     * @param id - an identifier for a disease.
      * @throws edu.nmt.model.RepositoryException
      */
     synchronized public void deleteById(long id)
@@ -148,25 +149,25 @@ public class HibernatePopulationDao extends HibernateDao {
     /**
      * Silently ignores being passed null and transient objects.
      *
-     * @param pop - the population to delete.
+     * @param dis - the disease to delete.
      * @throws edu.nmt.model.RepositoryException
      */
-    synchronized public void delete(Population pop)
+    synchronized public void delete(Disease dis)
             throws RepositoryException {
-        if (pop != null) {
+        if (dis != null) {
             try {
                 Session s = getSession();
 
-                //If pop.getId() returns 0, the object has not been persisted
+                //If dis.getId() returns 0, the object has not been persisted
                 //yet. I.E. it's transient, not detached or persistent. If it's >
                 //0, we can go ahead and just call delete and it'll figure it out
                 //for us.
-                if (pop.getId() > 0) {
-                    s.delete(pop);
+                if (dis.getId() > 0) {
+                    s.delete(dis);
                 }
             } 
             catch (HibernateException he) {
-                LOG.warn("Could not delete Population: " + pop);
+                LOG.warn("Could not delete Disease: " + dis);
                 rollbackTransaction();
                 throw new RepositoryException(he);
             }

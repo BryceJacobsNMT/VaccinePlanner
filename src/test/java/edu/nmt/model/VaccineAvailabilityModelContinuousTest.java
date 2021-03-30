@@ -92,5 +92,7 @@ public class VaccineAvailabilityModelContinuousTest {
             Assert.assertTrue(false);
         }       
     }
+    
+    
   
 }

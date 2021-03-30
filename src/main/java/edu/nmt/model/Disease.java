@@ -5,19 +5,36 @@
  */
 package edu.nmt.model;
 
+import edu.nmt.util.ObjectUtility;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  *
  * @author bryce
  */
-public class Disease {
+@Entity
+@Table( name="disease")
+public class Disease implements Serializable {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
+    @ElementCollection
     private final Map<Occupation,DiseaseStatistic> occupationDisease;
+    @ElementCollection
     private final Map<IncreasedRisk,DiseaseStatistic> increasedRiskDisease;
+    @ElementCollection
     private final Map<SevereIllness,DiseaseStatistic> severeIllnessDisease;
+    @ElementCollection
     private final Map<RacialCategory,DiseaseStatistic> racialDisease;
+    @ElementCollection
     private final Map<AgeGroup,DiseaseStatistic> ageDisease;
     
     public Disease(){
@@ -80,5 +97,34 @@ public class Disease {
     public void setSevereIllnessDisease( Map<SevereIllness,DiseaseStatistic> diseaseMap){
         severeIllnessDisease.clear();
         severeIllnessDisease.putAll( diseaseMap );
+    }
+    
+    @Override
+    public boolean equals( Object o ){
+        boolean equalObs = false;
+        if ( o instanceof Disease ){
+            Disease otherDisease = (Disease) o;
+            if ( ObjectUtility.objectsAreEqual( ageDisease, otherDisease.ageDisease)){
+                if ( ObjectUtility.objectsAreEqual( increasedRiskDisease, otherDisease.increasedRiskDisease)){
+                    if ( ObjectUtility.objectsAreEqual( occupationDisease, otherDisease.occupationDisease)){
+                        if ( ObjectUtility.objectsAreEqual( racialDisease, otherDisease.racialDisease)){
+                            equalObs = true;
+                        }
+                    }
+                }
+                
+            }
+        }
+        return equalObs;
+    }
+    
+    @Override
+    public int hashCode(){
+        final int MULT = 5;
+        int base = ObjectUtility.hashCode( ageDisease );
+        base = MULT * base + ObjectUtility.hashCode( increasedRiskDisease );
+        base = MULT * base + ObjectUtility.hashCode( occupationDisease );
+        base = MULT * base + ObjectUtility.hashCode( racialDisease );
+       return base;  
     }
 }

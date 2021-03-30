@@ -22,9 +22,11 @@ DROP TABLE IF EXISTS AgeGroupPopulation;
 DROP TABLE IF EXISTS RacialMixPopulation;
 DROP TABLE IF EXISTS Population;
 
+
 DROP TABLE IF EXISTS VaccineModelDeliveryDiscrete;
 DROP TABLE IF EXISTS VaccineModelDeliveryContinuous;
 DROP TABLE IF EXISTS VaccineDelivery;
+DROP TABLE IF EXISTS VaccineDeliveryAvailability;
 
 
 create table Population(
@@ -179,26 +181,33 @@ create table VaccineDelivery(
 );
 
 
+
+
 create table VaccineAvailabilityModelContinuous(
-    vaccine_delivery_id INTEGER NOT NULL,
+    id INTEGER NOT NULL,
     initial_amount INTEGER NOT NULL,
     growth_factor REAL NOT NULL,
     model_type CHARACTER(20) NOT NULL,
     CONSTRAINT initial_check CHECK (0 <= initial_amount),
-    CONSTRAINT growth_factor CHECK (0 <= growth_factor ),
-    FOREIGN KEY(vaccine_delivery_id) REFERENCES VaccineDelivery(id) ON DELETE CASCADE,
-    PRIMARY KEY( vaccine_delivery_id, initial_amount, growth_factor, model_type)
+    CONSTRAINT growth_factor CHECK (0 <= growth_factor ),  
+    PRIMARY KEY(id)
 );
 
 create table VaccineAvailabilityModelDiscrete(
-    vaccine_delivery_id INTEGER NOT NULL,
+    id INTEGER NOT NULL,
     elapsed_days INTEGER NOT NULL,
     doses INTEGER NOT NULL,
+    vaccine CHARACTER(20) NOT NULL,
     CONSTRAINT elapsed_check CHECK ( 0 <= elapsed_days),
     CONSTRAINT doses CHECK ( 0 <= doses ),
-    FOREIGN KEY(vaccine_delivery_id) REFERENCES VaccineDelivery(id) ON DELETE CASCADE,
-    PRIMARY KEY (vaccine_delivery_id, elapsed_days, doses)
+    PRIMARY KEY (id)
 );
 
-
+create table VaccineDeliveryAvailibility(
+    vaccine_delivery_id INTEGER NOT NULL,
+    vaccine_availability_id INTEGER NOT NULL,
+    vaccine CHARACTER(20) NOT NULL,
+    FOREIGN KEY(vaccine_delivery_id) REFERENCES VaccineDelivery(id) ON DELETE CASCADE,
+    FOREIGN KEY(vaccine_availability_id) REFERENCES VaccineAvailabilityModelContinuous(id) ON DELETE CASCADE
+);
 

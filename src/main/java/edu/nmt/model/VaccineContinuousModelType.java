@@ -5,7 +5,6 @@
  */
 package edu.nmt.model;
 
-import java.util.Map;
 
 /**
  *

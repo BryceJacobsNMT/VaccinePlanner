@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="edu.nmt.model">
+   <class name="edu.nmt.model.DiseaseStatistic">    
+       <id name="Id" type="long">
+           <generator class="native"/>
+       </id>
+       <property name="infectionRate" column="infection_rate"/>
+       <property name="hospitalizationRate" column="hospitalization_rate"/>
+       <property name="deathRate" column="death_rate"/>
+       <property name="spreadRate" column="spread_rate"/>    
+   </class>
+ 
+    
+</hibernate-mapping>

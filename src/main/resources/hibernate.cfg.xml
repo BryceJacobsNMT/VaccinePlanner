@@ -23,6 +23,12 @@
   
         <!-- Annotated entity classes -->
         <mapping class="edu.nmt.model.Population"/>
+        <mapping class="edu.nmt.model.DiseaseStatistic"/>
+        <mapping class="edu.nmt.model.Disease"/>
+        <mapping class="edu.nmt.model.Prioritization"/>
+        <mapping class="edu.nmt.model.VaccineAvailabilityModelContinuous"/>
+        <mapping class="edu.nmt.model.VaccineDelivery"/>
+        
          
     </session-factory>
 </hibernate-configuration>
