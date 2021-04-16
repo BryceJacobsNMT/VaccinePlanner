@@ -7,6 +7,7 @@ package edu.nmt.model;
 
 import edu.nmt.dao.HibernateVaccineDeliveryDao;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import junit.framework.Assert;
 import org.junit.After;
@@ -39,14 +40,7 @@ public class VaccineDeliveryTest {
     public void tearDown() {
     }
     
-    private DiseaseStatistic makeDiseaseStatistic( float deathRate, float hospRate, float infectRate, float spreadRate ){
-        DiseaseStatistic ds = new DiseaseStatistic();
-        ds.setDeathRate( .01f );
-        ds.setHospitalizationRate( .15f );
-        ds.setInfectionRate( 0.2f );
-        ds.setSpreadRate( 0.2f);
-        return ds;
-    }
+   
 
     /**
      * Tests that a VaccineDelivery model can be written to the database.
@@ -60,7 +54,7 @@ public class VaccineDeliveryTest {
         VaccineAvailabilityModelContinuous mod = new VaccineAvailabilityModelContinuous();
         mod.setInitialAmount( 250 );
         vaccineAvailability.put( Vaccine.MODERNA, mod);
-        vd.setVaccineAvailability( vaccineAvailability);
+        vd.setVaccineDeliveryAvailability( vaccineAvailability);
         
         HibernateVaccineDeliveryDao dao = new HibernateVaccineDeliveryDao();
         try {
@@ -69,6 +63,7 @@ public class VaccineDeliveryTest {
             dao.ping( 5 );
             System.out.println( "Finished pinging database");
             dao.save( vd);
+            System.out.println( "Saved delivery "+vd);
             
             long identifier = vd.getId();
             System.out.println( "Identifier="+identifier);
@@ -82,5 +77,27 @@ public class VaccineDeliveryTest {
             System.out.println( "Could not save vaccine delivery to database: "+re);
             Assert.assertTrue( false );
         }
+    }
+    
+    /**
+     * Test that we can query for vaccine deliveries.
+     */
+    @Test
+    public void testVaccineDeliveryFind(){
+        HibernateVaccineDeliveryDao dao = new HibernateVaccineDeliveryDao();
+        try {
+            //Look up the first vaccine delivery from the database.
+            System.out.println( "Pinging database");
+            dao.ping( 5 );
+            System.out.println( "Finished pinging database");
+            List<VaccineDelivery> dvList = dao.getAllVaccineDeliveries();
+            System.out.println( "Found delivery "+dvList.size()+" vaccine deliveries");
+            Assert.assertTrue( dvList != null);
+        }
+        catch( RepositoryException re ){
+            System.out.println( "Could not find vaccine delivery in database: "+re);
+            Assert.assertTrue( false );
+        }
+         
     }
 }

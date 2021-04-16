@@ -126,7 +126,9 @@ public class HibernatePopulationDao extends HibernateDao {
             throws RepositoryException {
         try {
             Session s = getSession();
+            this.beginTransaction();
             s.saveOrUpdate(pop);
+            this.commitTransaction();
         } 
         catch (HibernateException he) {
             LOG.warn("Failed to save Population: " + pop.getId());

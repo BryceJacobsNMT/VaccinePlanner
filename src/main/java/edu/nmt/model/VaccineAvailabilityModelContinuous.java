@@ -17,8 +17,8 @@ import javax.persistence.Table;
  * @author bryce
  */
 @Entity
-@Table( name="vaccinedelivery")
-public class VaccineAvailabilityModelContinuous implements VaccineAvailabilityModel, Serializable {
+@Table( name="vaccineavailabilitymodelcontinuous")
+public class VaccineAvailabilityModelContinuous implements Serializable {
   
     
     private VaccineContinuousModelType modelType;
@@ -40,7 +40,7 @@ public class VaccineAvailabilityModelContinuous implements VaccineAvailabilityMo
         this.growthFactor = growthFactor;
     }
     
-    @Override
+    
     public int getDoses( int dayCount ){
         return modelType.getDoses( dayCount, initialAmount, growthFactor);
     }
@@ -85,8 +85,9 @@ public class VaccineAvailabilityModelContinuous implements VaccineAvailabilityMo
             if ( initialAmount == vamcOther.initialAmount ){
                 if ( modelType == vamcOther.modelType ){
                     if ( Math.abs( growthFactor - vamcOther.growthFactor) < 0.000001f ){
-                        equalObj = false;
+                        equalObj = true;
                     }
+                   
                 }
             }
         }
@@ -100,6 +101,15 @@ public class VaccineAvailabilityModelContinuous implements VaccineAvailabilityMo
         base = MULT * base + Integer.hashCode( initialAmount );
         base = MULT * base + modelType.hashCode();
        return base;  
+    }
+    
+    @Override
+    public String toString(){
+        StringBuilder build = new StringBuilder();
+        build.append("Initial Amount:").append( initialAmount).append(";");
+        build.append("Growth Factor:").append( growthFactor ).append( ";");
+        build.append( "Model Type:").append( modelType ).append( ";");
+        return build.toString();
     }
     
 }

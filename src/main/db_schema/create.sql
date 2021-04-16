@@ -1,32 +1,27 @@
-
-DROP TABLE IF EXISTS RacialMix;
-DROP TABLE IF EXISTS AgeGroup;
-
-DROP TABLE IF EXISTS AgeGroupDisease;
-DROP TABLE IF EXISTS IncreasedRiskDisease;
-DROP TABLE IF EXISTS OccupationDisease;
-DROP TABLE IF EXISTS SevereIllness;
-DROP TABLE IF EXISTS RacialDisease;
+DROP TABLE IF EXISTS DiseaseStatistic CASCADE;
+DROP TABLE IF EXISTS IncreasedRiskDisease CASCADE;
+DROP TABLE IF EXISTS OccupationDisease CASCADE;
+DROP TABLE IF EXISTS SevereIllnessDisease CASCADE;
+DROP TABLE IF EXISTS RacialDisease CASCADE;
+DROP TABLE IF EXISTS AgeDisease CASCADE;
 DROP TABLE IF EXISTS Disease;
-DROP TABLE IF EXISTS DiseaseStatistic;
 
 
-DROP TABLE IF EXISTS Prioritization;
 DROP TABLE IF EXISTS OccupationPriority;
 DROP TABLE IF EXISTS IncreasedRiskPriority;
 DROP TABLE IF EXISTS SevereIllnessPriority;
 DROP TABLE IF EXISTS RacialPriority;
 DROP TABLE IF EXISTS AgePriority;
+DROP TABLE IF EXISTS Prioritization;
 
-DROP TABLE IF EXISTS AgeGroupPopulation;
-DROP TABLE IF EXISTS RacialMixPopulation;
+DROP TABLE IF EXISTS AgeGroupPopulation CASCADE;
+DROP TABLE IF EXISTS RacialMixPopulation CASCADE;
 DROP TABLE IF EXISTS Population;
 
-
-DROP TABLE IF EXISTS VaccineModelDeliveryDiscrete;
-DROP TABLE IF EXISTS VaccineModelDeliveryContinuous;
-DROP TABLE IF EXISTS VaccineDelivery;
-DROP TABLE IF EXISTS VaccineDeliveryAvailability;
+DROP TABLE IF EXISTS VaccineDeliveryAvailability CASCADE;
+DROP TABLE IF EXISTS VaccineAvailabilityModelContinuous CASCADE;
+DROP TABLE IF EXISTS VaccineAvailabilityModelDiscrete CASCADE;
+DROP TABLE IF EXISTS VaccineDelivery CASCADE;
 
 
 create table Population(
@@ -34,7 +29,6 @@ create table Population(
 	chronic_medical_condition_percentage REAL not null,
 	increased_risk_percentage REAL not null,
 	severe_illness_percentage REAL not null,
-	target_date date not null,
 	PRIMARY KEY (id),
         CONSTRAINT chronic_check CHECK (0 <= chronic_medical_condition_percentage AND chronic_medical_condition_percentage <= 1),
         CONSTRAINT increased_check CHECK ( 0 <= increased_risk_percentage AND increased_risk_percentage <= 1),
@@ -79,27 +73,27 @@ create table DiseaseStatistic (
 create table IncreasedRiskDisease(
     disease_id INTEGER NOT NULL,
     disease_statistic_id INTEGER NOT NULL,
-    increased_risk CHARACTER(20) NOT NULL,
-    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id) ON DELETE CASCADE,
-    FOREIGN KEY (disease_id) REFERENCES Disease(id) ON DELETE CASCADE,
+    increased_risk CHARACTER(30) NOT NULL,
+    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id),
+    FOREIGN KEY (disease_id) REFERENCES Disease(id),
     PRIMARY KEY (disease_id, increased_risk)
 );
 
 create table OccupationDisease(
     disease_id INTEGER NOT NULL,
     disease_statistic_id INTEGER NOT NULL,
-    occupation CHARACTER(20) NOT NULL,
-    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id) ON DELETE CASCADE,
-    FOREIGN KEY (disease_id ) REFERENCES Disease(id) ON DELETE CASCADE,
+    occupation CHARACTER(40) NOT NULL,
+    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id),
+    FOREIGN KEY (disease_id ) REFERENCES Disease(id),
     PRIMARY KEY (disease_id, occupation)
 );
 
 create table SevereIllnessDisease(
     disease_id INTEGER NOT NULL,
     disease_statistic_id INTEGER NOT NULL,
-    severe_illness CHARACTER(20) NOT NULL,
-    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id) ON DELETE CASCADE,
-    FOREIGN KEY (disease_id) REFERENCES Disease( id ) ON DELETE CASCADE,
+    severe_illness CHARACTER(40) NOT NULL,
+    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id),
+    FOREIGN KEY (disease_id) REFERENCES Disease( id ),
     PRIMARY KEY (disease_id, severe_illness)
 );
 
@@ -107,8 +101,8 @@ create table RacialDisease(
     disease_id INTEGER NOT NULL,
     disease_statistic_id INTEGER NOT NULL,
     racial_disease CHARACTER(20) NOT NULL,
-    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id) ON DELETE CASCADE,
-    FOREIGN KEY (disease_id) REFERENCES Disease( id) ON DELETE CASCADE,
+    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id),
+    FOREIGN KEY (disease_id) REFERENCES Disease( id),
     PRIMARY KEY (disease_id, racial_disease)
 );
 
@@ -116,8 +110,8 @@ create table AgeDisease(
     disease_id INTEGER NOT NULL,
     disease_statistic_id INTEGER NOT NULL,
     age_group CHARACTER(20) NOT NULL,
-    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id) ON DELETE CASCADE,
-    FOREIGN KEY (disease_id) REFERENCES Disease( id) ON DELETE CASCADE,
+    FOREIGN KEY ( disease_statistic_id ) REFERENCES DiseaseStatistic( id),
+    FOREIGN KEY (disease_id) REFERENCES Disease( id),
     PRIMARY KEY (disease_id, age_group)
 );
 
@@ -130,7 +124,7 @@ create table Prioritization(
 
 create table OccupationPriority (
     prioritization_id INTEGER NOT NULL,
-    occupation CHARACTER(20) NOT NULL,
+    occupation CHARACTER(40) NOT NULL,
     priority_group INTEGER NOT NULL,
     CONSTRAINT priority_check CHECK (1 <= priority_group AND priority_group <= 10 ),
     FOREIGN KEY (prioritization_id) REFERENCES Prioritization(id) on DELETE CASCADE,
@@ -139,7 +133,7 @@ create table OccupationPriority (
 
 create table IncreasedRiskPriority (
     prioritization_id INTEGER NOT NULL,
-    increased_risk CHARACTER(20) NOT NULL,
+    increased_risk CHARACTER(30) NOT NULL,
     priority_group INTEGER NOT NULL,
     CONSTRAINT priority_check CHECK (1 <= priority_group AND priority_group <= 10 ),
     FOREIGN KEY (prioritization_id) REFERENCES Prioritization(id) on DELETE CASCADE,
@@ -148,7 +142,7 @@ create table IncreasedRiskPriority (
 
 create table SevereIllnessPriority (
     prioritization_id INTEGER NOT NULL,
-    severe_illness CHARACTER(20) NOT NULL,
+    severe_illness CHARACTER(40) NOT NULL,
     priority_group INTEGER NOT NULL,
     CONSTRAINT priority_check CHECK (1 <= priority_group AND priority_group <= 10 ),
     FOREIGN KEY (prioritization_id) REFERENCES Prioritization(id) on DELETE CASCADE,
@@ -181,8 +175,6 @@ create table VaccineDelivery(
 );
 
 
-
-
 create table VaccineAvailabilityModelContinuous(
     id INTEGER NOT NULL,
     initial_amount INTEGER NOT NULL,
@@ -203,11 +195,36 @@ create table VaccineAvailabilityModelDiscrete(
     PRIMARY KEY (id)
 );
 
-create table VaccineDeliveryAvailibility(
+create table VaccineDeliveryAvailability(
     vaccine_delivery_id INTEGER NOT NULL,
     vaccine_availability_id INTEGER NOT NULL,
     vaccine CHARACTER(20) NOT NULL,
     FOREIGN KEY(vaccine_delivery_id) REFERENCES VaccineDelivery(id) ON DELETE CASCADE,
-    FOREIGN KEY(vaccine_availability_id) REFERENCES VaccineAvailabilityModelContinuous(id) ON DELETE CASCADE
+    FOREIGN KEY(vaccine_availability_id) REFERENCES VaccineAvailabilityModelContinuous(id) ON DELETE CASCADE,
+    PRIMARY KEY (vaccine_delivery_id, vaccine)
 );
 
+ALTER TABLE DiseaseStatistic OWNER TO vaccineplannerapp;
+ALTER TABLE IncreasedRiskDisease OWNER TO vaccineplannerapp;
+ALTER TABLE  OccupationDisease  OWNER TO vaccineplannerapp;
+ALTER TABLE  SevereIllnessDisease  OWNER TO vaccineplannerapp;
+ALTER TABLE  RacialDisease  OWNER TO vaccineplannerapp;
+ALTER TABLE  AgeDisease  OWNER TO vaccineplannerapp;
+ALTER TABLE  Disease  OWNER TO vaccineplannerapp;
+
+
+ALTER TABLE  OccupationPriority  OWNER TO vaccineplannerapp;
+ALTER TABLE  IncreasedRiskPriority  OWNER TO vaccineplannerapp;
+ALTER TABLE  SevereIllnessPriority  OWNER TO vaccineplannerapp; 
+ALTER TABLE  RacialPriority  OWNER TO vaccineplannerapp;
+ALTER TABLE  AgePriority  OWNER TO vaccineplannerapp;
+ALTER TABLE  Prioritization  OWNER TO vaccineplannerapp;
+
+ALTER TABLE  AgeGroupPopulation  OWNER TO vaccineplannerapp;
+ALTER TABLE  RacialMixPopulation  OWNER TO vaccineplannerapp;
+ALTER TABLE  Population  OWNER TO vaccineplannerapp;
+
+ALTER TABLE  VaccineDeliveryAvailability  OWNER TO vaccineplannerapp;
+ALTER TABLE  VaccineAvailabilityModelContinuous  OWNER TO vaccineplannerapp;
+ALTER TABLE  VaccineAvailabilityModelDiscrete  OWNER TO vaccineplannerapp;
+ALTER TABLE  VaccineDelivery  OWNER TO vaccineplannerapp;

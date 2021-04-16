@@ -9,6 +9,7 @@ import edu.nmt.util.ObjectUtility;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,43 +29,44 @@ public class VaccineDelivery implements Serializable {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
     @ElementCollection
-    private Map<Vaccine, VaccineAvailabilityModelContinuous> vaccineAvailability;
+    private Map<Vaccine,VaccineAvailabilityModelContinuous> vaccineDeliveryAvailability;
     
     
     public VaccineDelivery(  ){
-       vaccineAvailability = new HashMap<>();
+       vaccineDeliveryAvailability = new HashMap<>();
     }
     
     public long getId(){
         return id;
     }
     
-    public Map<Vaccine, VaccineAvailabilityModelContinuous> getVaccineAvailability(){
-        return vaccineAvailability;
+    public Map<Vaccine, VaccineAvailabilityModelContinuous> getVaccineDeliveryAvailability(){
+        return vaccineDeliveryAvailability;
     }
     
     
-    private void setId( long id ){
+    public void setId( long id ){
         this.id = id;
     }
     
     public void addVaccineSource( Vaccine vaccine, VaccineAvailabilityModelContinuous availabilityModel ){
         assert( vaccine != null );
         assert( availabilityModel != null );
-        vaccineAvailability.put( vaccine, availabilityModel);
+        vaccineDeliveryAvailability.put( vaccine, availabilityModel);
     }
     
     public int getDoses( int elapsedDays, Vaccine vac ){
         int doses = 0;
-        if ( vaccineAvailability.containsKey(vac)){
-            VaccineAvailabilityModel availModel = vaccineAvailability.get(vac);
+        if ( vaccineDeliveryAvailability.containsKey(vac)){
+            VaccineAvailabilityModelContinuous availModel = vaccineDeliveryAvailability.get(vac);
             doses = availModel.getDoses( elapsedDays );
         }
         return doses;
     }
     
-    public void setVaccineAvailability( Map<Vaccine, VaccineAvailabilityModelContinuous> model ){
-        this.vaccineAvailability = model;
+    public void setVaccineDeliveryAvailability( Map<Vaccine, VaccineAvailabilityModelContinuous> model ){
+        this.vaccineDeliveryAvailability.clear();
+        this.vaccineDeliveryAvailability.putAll( model );
     }
     
    
@@ -73,7 +75,7 @@ public class VaccineDelivery implements Serializable {
         boolean equalObs = false;
         if ( o instanceof VaccineDelivery ){
             VaccineDelivery vc = (VaccineDelivery)o;
-            if ( ObjectUtility.objectsAreEqual( this.vaccineAvailability, vc.vaccineAvailability )){
+            if ( ObjectUtility.objectsAreEqual( this.vaccineDeliveryAvailability, vc.vaccineDeliveryAvailability )){
                 equalObs = true;
             }
         }
@@ -82,7 +84,17 @@ public class VaccineDelivery implements Serializable {
     
     @Override
     public int hashCode(){
-        int base = ObjectUtility.hashCode( vaccineAvailability);
+        int base = ObjectUtility.hashCode( vaccineDeliveryAvailability);
        return base;  
+    }
+    
+    @Override
+    public String toString(){
+        Set<Vaccine> vaccines = vaccineDeliveryAvailability.keySet();
+        StringBuilder build = new StringBuilder();
+        for ( Vaccine vac : vaccines ){
+            build.append( "Vaccine: ").append(vac).append(", availability=").append(vaccineDeliveryAvailability.get(vac));
+        }
+        return build.toString();
     }
 }

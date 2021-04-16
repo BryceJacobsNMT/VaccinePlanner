@@ -27,15 +27,29 @@ public class DiseaseStatistic {
     private float deathRate;
     private float spreadRate;
     
+    /**
+     * Returns the percentage of people who are exposed that become infected.
+     * @return - the percentage of people who catch the disease after being exposed.
+     */
     public float getInfectionRate(){
         return infectionRate;
     }
+    
+    /**
+     * Returns the percentage of people who are hospitalized after being infected.
+     * @return 
+     */
     public float getHospitalizationRate(){
         return hospitalizationRate;
     }
     public float getDeathRate(){
         return deathRate;
     }
+    
+    /**
+     * Returns the percentage of people that are exposed to the disease from an infected person.
+     * @return 
+     */
     public float getSpreadRate(){
         return spreadRate;
     }

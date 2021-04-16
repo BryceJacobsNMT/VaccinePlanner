@@ -44,7 +44,6 @@ public class HibernateVaccineDeliveryDao extends HibernateDao {
             throws RepositoryException {
         try {
             Session s = getSession();
-
             VaccineDelivery vd = (VaccineDelivery) s.get(VaccineDelivery.class, id);
             return vd;
         } 
@@ -63,7 +62,6 @@ public class HibernateVaccineDeliveryDao extends HibernateDao {
             throws RepositoryException {
         try {
             Session s = getSession();
-
             VaccineDelivery vd = (VaccineDelivery) s.get(VaccineDelivery.class, id);
             return vd;
         } 
@@ -89,7 +87,6 @@ public class HibernateVaccineDeliveryDao extends HibernateDao {
 
             List<VaccineDelivery> vds = new ArrayList<>();
             vds.addAll(q.list());
-
             return vds;
         } 
         catch (HibernateException he) {
@@ -97,6 +94,8 @@ public class HibernateVaccineDeliveryDao extends HibernateDao {
             throw new RepositoryException(he);
         }
     }
+    
+   
 
     /**
      * Saves a vaccine delivery to the database.
@@ -107,7 +106,7 @@ public class HibernateVaccineDeliveryDao extends HibernateDao {
             throws RepositoryException {
         try {
             Session s = getSession();
-            s.saveOrUpdate(vd);
+            s.saveOrUpdate(vd);          
         } 
         catch (HibernateException he) {
             LOG.warn("Failed to save Vaccine Delivery: " + vd.getId());

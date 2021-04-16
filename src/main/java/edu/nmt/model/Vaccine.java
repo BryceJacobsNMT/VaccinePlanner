@@ -13,7 +13,7 @@ import java.util.List;
  * @author bryce
  */
 public enum Vaccine {
-    MODERNA( "Moderna", Arrays.asList( new Float[]{80f, 94.1f}), 28),
+    /*MODERNA( "Moderna", Arrays.asList( new Float[]{80f, 94.1f}), 28),
     PFIZER_BIONTECH("Pfizer-Biontech", Arrays.asList( new Float[]{90f, 95f}), 21),
     JOHNSON( "Johnson and Johnson", Arrays.asList( new Float[]{66f}), 0);
     
@@ -26,6 +26,9 @@ public enum Vaccine {
         this.name = name;
         this.efficacies = efficacy;
         this.dosageInterval = dosageInterval;
-    }
+    }*/
+    MODERNA,
+    PFIZER,
+    JOHNSON;
     
 }

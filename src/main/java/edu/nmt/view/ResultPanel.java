@@ -3,17 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.nmt.model;
+package edu.nmt.view;
 
-import java.io.Serializable;
+import javax.swing.JPanel;
 
 /**
- *
+ * View for displaying the results of a model.
  * @author bryce
  */
-public interface VaccineAvailabilityModel {
-  
-    
-    public abstract int getDoses( int dayCount );
+public class ResultPanel extends JPanel{
     
 }

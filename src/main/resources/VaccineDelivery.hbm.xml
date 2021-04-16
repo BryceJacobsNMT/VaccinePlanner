@@ -9,7 +9,7 @@
     <id name="Id" type="long">
       <generator class="native"/>
     </id>
-    <map name="VaccineAvailability" table="VaccineDeliveryAvailibility">
+    <map name="vaccineDeliveryAvailability" table="VaccineDeliveryAvailability">
       <key not-null="true" column = "vaccine_delivery_id" type="long"/>
       <map-key column="vaccine" type="string"/>
       <one-to-many column="vaccine_availability_id" 
@@ -22,6 +22,6 @@
     
   </class>
    
- 
+  
     
 </hibernate-mapping>
