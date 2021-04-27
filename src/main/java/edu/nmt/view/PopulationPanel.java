@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * View for entering the name of a file for obtaining the population information.
+ * View for entering population information.
  * @author bryce
  */
 public class PopulationPanel extends JPanel{
@@ -46,7 +46,7 @@ public class PopulationPanel extends JPanel{
             if ( result == JFileChooser.APPROVE_OPTION ){
                 String fileName = chooser.getSelectedFile().getName();
                 fileText.setText( fileName );
-                Population pop = getPopulationFromFile();
+                Population pop = getPopulationFromFile( fileName );
                 if ( pop != null ){
                     populationChanged( pop );
                 }
@@ -79,11 +79,12 @@ public class PopulationPanel extends JPanel{
     
     /**
      * Parses a text file to return a population.
+     * @param fileName - the name of the file to read.
      * @return - the population described in the file.
      */
     //Note:  Until a sample text file can be provided for parsing, a sample population will be
     //hard-coded for the purpose of producing results.
-    public Population getPopulationFromFile(){
+    public static Population getPopulationFromFile( String fileName){
         Population pop = new Population();
         pop.setChronicMedicalConditionPercent(.1f);
         pop.setIncreasedRiskPercent(.2f);

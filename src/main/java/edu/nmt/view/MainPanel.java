@@ -49,11 +49,24 @@ public class MainPanel {
         
         
         JTabbedPane tabPane = new JTabbedPane(JTabbedPane.TOP);
+        
         PopulationPanel popPanel = new PopulationPanel();
         tabPane.addTab( "Population", null, popPanel,"Population Entry");
         
+        DiseasePanel disPanel = new DiseasePanel();
+        tabPane.addTab( "Disease", null, disPanel, "Disease Entry");
+        
+        PriorityPanel priorPanel = new PriorityPanel();
+        tabPane.addTab( "Prioritization", null, priorPanel, "Prioritization Entry");
+        
+        VaccineDeliveryPanel devPanel = new VaccineDeliveryPanel();
+        tabPane.addTab( "VaccineDelivery", null, devPanel, "Vaccine Delivery Entry");
+        
         ResultPanel resPanel = new ResultPanel();
         popPanel.addPopulationChangeListener( resPanel );
+        disPanel.addDiseaseChangeListener( resPanel );
+        priorPanel.addPriorityChangeListener( resPanel );
+        devPanel.addDeliveryChangeListener( resPanel );
         tabPane.addTab( "Results", null, resPanel, "Displays Results");
        
         frame.getContentPane().setLayout( new GridLayout(1,1));
