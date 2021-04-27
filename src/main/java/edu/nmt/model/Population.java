@@ -8,11 +8,14 @@ package edu.nmt.model;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 /**
@@ -25,13 +28,21 @@ public class Population implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
-  
+    @Column( name="chronic_medical_condition_percentage")
     private float chronicMedicalConditionPercent;
+    @Column( name="increased_risk_percentage")
     private float increasedRiskPercent;
+    @Column( name="severe_illness_percentage")
     private float severeIllnessPercent;
     @ElementCollection
+    @CollectionTable(
+        name = "RacialMixPopulation",
+        joinColumns=@JoinColumn(name = "population_id", referencedColumnName = "id"))
     private final Map<RacialCategory,Float> racialMix;
     @ElementCollection
+    @CollectionTable(
+        name = "AgeGroupPopulation",
+        joinColumns=@JoinColumn(name = "population_id", referencedColumnName = "id"))
     private final Map<AgeGroup,Float> ageMix;
     
     /**

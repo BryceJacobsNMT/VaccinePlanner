@@ -38,11 +38,13 @@ public class PopulationTest {
     @After
     public void tearDown() {
     }
+    
+   
 
     /**
      * Tests that a population can be written to the database.
      */
-    @Test
+    //@Test
     public void testPopulationSave() {
         //Create a population
         Population pop = new Population();

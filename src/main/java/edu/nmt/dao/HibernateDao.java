@@ -1,6 +1,8 @@
 package edu.nmt.dao;
 
 import edu.nmt.model.RepositoryException;
+import java.io.File;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -50,7 +52,7 @@ public class HibernateDao {
      */
     public HibernateDao(String cfg, Interceptor i) {
         if (cfg == null || cfg.length() == 0) {
-            this.configFileName = "/hibernate.cfg.xml";
+            this.configFileName = "hibernate.cfg.xml";
         } else {
             this.configFileName = cfg;
         }
@@ -91,7 +93,7 @@ public class HibernateDao {
         synchronized (FACTORIES) {
             String newCfg;
             if (cfg == null || cfg.length() == 0) {
-                newCfg = "/hibernate.cfg.xml";
+                newCfg = "hibernate.cfg.xml";
             } 
             else {
                 newCfg = cfg;
@@ -114,7 +116,11 @@ public class HibernateDao {
             throws RepositoryException {
         try {
             this.hibConfig = new Configuration();
-            this.hibConfig.configure(this.configFileName);
+            URL resourceURL = HibernateDao.class.getClassLoader().getResource( configFileName);
+            String filePath = resourceURL.getPath();
+            System.out.println( "filePath="+filePath);
+            File file = new File( filePath );
+            this.hibConfig.configure(file);
 
             return this.hibConfig;
         } 

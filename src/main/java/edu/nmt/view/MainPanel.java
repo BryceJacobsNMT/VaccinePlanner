@@ -6,43 +6,57 @@
 package edu.nmt.view;
 
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 /**
  * Main application frame.
  * @author bryce
  */
-public class MainPanel extends JFrame {
+public class MainPanel {
     
+    /**
+     * Application entry point.
+     * @param args - command line arguments. 
+     */
     public static void main( String[] args ){
-        new MainPanel();
+        SwingUtilities.invokeLater(() -> {
+            createAndShowGUI();
+        });
     }
     
-    public MainPanel(){
-        this.setSize(500,400);
-        this.setVisible( true );
+    /*
+    * Shows the GUI.
+    */
+    public static void createAndShowGUI(){
+        JFrame frame = new JFrame();
+        frame.setSize(2000,1200);
+        frame.setVisible( true );
         
         Toolkit tk = Toolkit.getDefaultToolkit();
         Dimension dim = tk.getScreenSize();
         
-        int xPos = (dim.width / 2) - (this.getWidth() / 2);
-        int yPos = (dim.height / 2 ) - (this.getHeight() / 2 );
+        int xPos = (dim.width / 2) - (frame.getWidth() / 2);
+        int yPos = (dim.height / 2 ) - (frame.getHeight() / 2 );
         
-        this.setLocation( xPos, yPos );
-        this.setResizable( false );
-        this.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-        this.setTitle( "Vaccine Planner");
+        frame.setLocation( xPos, yPos );
+        frame.setResizable( false );
+        frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        frame.setTitle( "Vaccine Planner");
         
         
-        JTabbedPane tabPane = new JTabbedPane();
+        JTabbedPane tabPane = new JTabbedPane(JTabbedPane.TOP);
         PopulationPanel popPanel = new PopulationPanel();
-        tabPane.addTab( "Population", popPanel);
+        tabPane.addTab( "Population", null, popPanel,"Population Entry");
+        
         ResultPanel resPanel = new ResultPanel();
-        tabPane.addTab( "Results", resPanel);
+        popPanel.addPopulationChangeListener( resPanel );
+        tabPane.addTab( "Results", null, resPanel, "Displays Results");
        
-        this.add(tabPane );    
-    }
-    
+        frame.getContentPane().setLayout( new GridLayout(1,1));
+        frame.getContentPane().add(tabPane );    
+    }  
 }

@@ -9,17 +9,17 @@
     <id name="Id" type="long">
       <generator class="native"/>
     </id>
-    <property name="ChronicMedicalConditionPercent"/>
-    <property name="IncreasedRiskPercent"/>
-    <property name="SevereIllnessPercent"/>
+    <property name="ChronicMedicalConditionPercent" />
+    <property name="IncreasedRiskPercent" />
+    <property name="SevereIllnessPercent" />
  
-    <map name="RacialMix" table="RacialMix">
+    <map name="RacialMix" table="RacialMixPopulation">
       <key not-null="true" column = "population_id" type="long"/>
       <map-key column="racial_category" type="string"/>
       <one-to-many column="percent" type="float" not-null="true"/>
     </map>
     
-    <map name="AgeMix" table="AgeGroup">
+    <map name="AgeMix" table="AgeGroupPopulation">
         <key not-null="true" column="population_id" type="long"/>
         <map-key column="age_group" type="string"/>
         <one-to-many column="percent" type="float" not-null="true"/>
