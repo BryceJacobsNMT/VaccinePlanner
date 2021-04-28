@@ -244,7 +244,7 @@ public class Population implements Serializable {
             }
         }
         else {
-            System.out.println( "Unexpected string for population: "+popString );
+            System.out.println( "Unexpected string for population: "+popString+" line count="+lines.length );
         }
         return pop;
     }

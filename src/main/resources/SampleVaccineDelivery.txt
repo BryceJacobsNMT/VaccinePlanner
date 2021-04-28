@@ -1,0 +1,2 @@
+Name: Unnamed
+Vaccines: {MODERNA=Initial Amount:250;Growth Factor:0.15;Model Type:EXPONENTIAL;}

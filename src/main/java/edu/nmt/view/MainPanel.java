@@ -13,7 +13,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 /**
- * Main application frame.
+ * Main entry point for GUI version.
  * @author bryce
  */
 public class MainPanel {

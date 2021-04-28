@@ -105,7 +105,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <mainClass>edu.nmt.view.MainPanel</mainClass>
+                    <mainClass>edu.nmt.view.MainCommand</mainClass>
                 </configuration>
             </plugin>
         </plugins>

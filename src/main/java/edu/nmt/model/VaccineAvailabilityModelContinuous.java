@@ -133,7 +133,7 @@ public class VaccineAvailabilityModelContinuous implements Serializable {
             }
 
             try {
-                avmc.setGrowthFactor(Integer.parseInt(lines[1].substring(GROW_LABEL.length(), lines[1].length())));
+                avmc.setGrowthFactor(Float.parseFloat(lines[1].substring(GROW_LABEL.length(), lines[1].length())));
             } 
             catch (NumberFormatException nfe) {
                 System.out.println("Could not parse vaccine growth factor: " + lines[1]);
