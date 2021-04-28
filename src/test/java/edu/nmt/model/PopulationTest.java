@@ -20,6 +20,8 @@ import org.junit.Test;
  */
 public class PopulationTest {
     
+    private Population pop;
+    
     public PopulationTest() {
     }
     
@@ -33,21 +35,8 @@ public class PopulationTest {
     
     @Before
     public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
-   
-
-    /**
-     * Tests that a population can be written to the database.
-     */
-    //@Test
-    public void testPopulationSave() {
-        //Create a population
-        Population pop = new Population();
+         //Create a population
+        pop = new Population();
         pop.setChronicMedicalConditionPercent(.1f);
         pop.setIncreasedRiskPercent(.2f);
         pop.setSevereIllnessPercent(.05f);
@@ -68,8 +57,29 @@ public class PopulationTest {
         ageMix.put(AgeGroup.OLDER_ADULT, .1f );
         ageMix.put(AgeGroup.OLDER_ADULT, .1f );
         pop.setAgeMix( ageMix );
+        System.out.println( "Population is: "+pop);
+    }
+    
+    @After
+    public void tearDown() {
+    }
+    
+    /**
+     * Test writing a population to a string and reading it back in.
+     */
+    @Test
+    public void testFromString(){
+        String popString = pop.toString();       
+        Population pop2 = Population.fromString( popString );
+        Assert.assertTrue( pop.equals(pop2));
+    }
+
+    /**
+     * Tests that a population can be written to the database.
+     */
+    //@Test
+    public void testPopulationSave() {
                 
-        
         HibernatePopulationDao dao = new HibernatePopulationDao();
         try {
             //Save the population to the database.

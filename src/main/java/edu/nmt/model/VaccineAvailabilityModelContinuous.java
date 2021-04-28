@@ -28,6 +28,10 @@ public class VaccineAvailabilityModelContinuous implements Serializable {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
     
+    private static final String INIT_LABEL = "Initial Amount:";
+    private static final String GROW_LABEL = "Growth Factor:";
+    private static final String TYPE_LABEL = "Model Type:";
+    
     public VaccineAvailabilityModelContinuous(){
         this.modelType = VaccineContinuousModelType.EXPONENTIAL;
         initialAmount = 100;
@@ -106,10 +110,46 @@ public class VaccineAvailabilityModelContinuous implements Serializable {
     @Override
     public String toString(){
         StringBuilder build = new StringBuilder();
-        build.append("Initial Amount:").append( initialAmount).append(";");
-        build.append("Growth Factor:").append( growthFactor ).append( ";");
-        build.append( "Model Type:").append( modelType ).append( ";");
+        build.append(INIT_LABEL).append( initialAmount).append(";");
+        build.append(GROW_LABEL).append( growthFactor ).append( ";");
+        build.append( TYPE_LABEL).append( modelType ).append( ";");
         return build.toString();
+    }
+    
+    /**
+     * Constructs a vaccine availability model from a textual representation.
+     * @param contStr - a textual description of a vaccine availability model.
+     * @return - the corresponding VaccineAvailabilityModelContinuous.
+     */
+    public static final VaccineAvailabilityModelContinuous fromString(String contStr) {
+        VaccineAvailabilityModelContinuous avmc = new VaccineAvailabilityModelContinuous();
+        String[] lines = contStr.split( ";");
+        if ( lines.length == 3 ){
+            try {
+                avmc.setInitialAmount(Integer.parseInt(lines[0].substring(INIT_LABEL.length(), lines[0].length())));
+            } 
+            catch (NumberFormatException nfe) {
+                System.out.println("Could not parse initial amount of vaccine: " + lines[0]);
+            }
+
+            try {
+                avmc.setGrowthFactor(Integer.parseInt(lines[1].substring(GROW_LABEL.length(), lines[1].length())));
+            } 
+            catch (NumberFormatException nfe) {
+                System.out.println("Could not parse vaccine growth factor: " + lines[1]);
+            }
+            
+            try {
+                avmc.setVaccineContinuousModelType(VaccineContinuousModelType.valueOf(lines[2].substring(TYPE_LABEL.length(), lines[2].length())));
+            } 
+            catch (NumberFormatException nfe) {
+                System.out.println("Could not parse vaccine growth factor: " + lines[2]);
+            }
+        }
+        else {
+            System.out.println( "Could not parse vaccine model availability: "+contStr);
+        }
+        return avmc;
     }
     
 }

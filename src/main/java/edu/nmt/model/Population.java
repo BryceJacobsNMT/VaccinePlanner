@@ -5,6 +5,7 @@
  */
 package edu.nmt.model;
 
+import edu.nmt.util.ObjectUtility;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +45,14 @@ public class Population implements Serializable {
         name = "AgeGroupPopulation",
         joinColumns=@JoinColumn(name = "population_id", referencedColumnName = "id"))
     private final Map<AgeGroup,Float> ageMix;
+    private String name;
+    
+    private final static String POP_LABEL = "Population: ";
+    private final static String CHRON_LABEL = "Chronic Medical Condition Percent: ";
+    private final static String RISK_LABEL = "Increased Risk Percent: ";
+    private final static String SEVERE_LABEL = "Severe Illness Percent: ";
+    private final static String RACIAL_LABEL = "Racial Mix: ";
+    private final static String AGE_LABEL = "Age Mix: ";
     
     /**
      * Constructor.
@@ -51,6 +60,7 @@ public class Population implements Serializable {
     public Population(){
         racialMix = new HashMap<>();
         ageMix = new HashMap<>();
+        name = ObjectUtility.DEFAULT_NAME;
     }
     
     /**
@@ -68,6 +78,10 @@ public class Population implements Serializable {
     
     public float getIncreasedRiskPercent(){
         return increasedRiskPercent;
+    }
+    
+    public String getName(){
+        return name;
     }
     
   
@@ -104,6 +118,10 @@ public class Population implements Serializable {
         this.ageMix.putAll( ageMix );
     }
     
+    public void setName( String name ){
+        this.name = name;
+    }
+    
   
     public void setRacialMix( Map<RacialCategory,Float> racialMix ){
          this.racialMix.clear();
@@ -121,7 +139,9 @@ public class Population implements Serializable {
                     if ( Math.abs( severeIllnessPercent - otherPop.severeIllnessPercent ) < ERR ){
                         if ( racialMix.equals( otherPop.racialMix)){
                             if (ageMix.equals( otherPop.ageMix)){
-                                result = true;
+                                if ( ObjectUtility.objectsAreEqual(name, otherPop.name)){
+                                    result = true;
+                                }
                             }
                         }
                     }
@@ -144,6 +164,8 @@ public class Population implements Serializable {
             base = MULT * base + ageMix.hashCode();
             
        }
+       
+       base = MULT * base + ObjectUtility.hashCode(name);
        return base;       
     }
     
@@ -151,12 +173,80 @@ public class Population implements Serializable {
     public String toString(){
         final String EOL = "\n";
         StringBuilder build = new StringBuilder();
-        build.append( "Chronic Medical Condition Percent: ").append( chronicMedicalConditionPercent ).append(EOL);
-        build.append( "Increased Risk Percent: ").append( increasedRiskPercent ).append( EOL );
-        build.append( "Severe Illness Percent: ").append( severeIllnessPercent ).append( EOL );
-        build.append( "Racial Mix: ").append( racialMix ).append( EOL );
-        build.append( "Age Mix: ").append( ageMix ).append( EOL );
+        build.append( POP_LABEL ).append( name ).append( EOL );
+        build.append( CHRON_LABEL ).append( chronicMedicalConditionPercent ).append(EOL);
+        build.append( RISK_LABEL ).append( increasedRiskPercent ).append( EOL );
+        build.append( SEVERE_LABEL).append( severeIllnessPercent ).append( EOL );
+        build.append( RACIAL_LABEL).append( racialMix ).append( EOL );
+        build.append( AGE_LABEL).append( ageMix ).append( EOL );
         return build.toString();
+    }
+    
+    /**
+     * Constructs a population from a textual representation.
+     * @param popString - a textual description of a population.
+     * @return - the corresponding Population.
+     */
+    public static Population fromString( String popString ){
+        Population pop = new Population();
+        String[] lines = popString.split( "\n");
+        if ( lines.length == 6 ){
+            pop.setName( lines[0].substring(POP_LABEL.length(), lines[0].length()));
+            try {
+                pop.setChronicMedicalConditionPercent( Float.parseFloat(lines[1].substring( CHRON_LABEL.length(),lines[1].length())));
+            }
+            catch( NumberFormatException nfe ){
+                System.out.println( "Could not parse chronic medical condition: "+lines[1]);
+            }
+            try {
+                pop.setIncreasedRiskPercent( Float.parseFloat(lines[2].substring( RISK_LABEL.length(),lines[2].length())));
+            }
+            catch( NumberFormatException nfe ){
+                System.out.println( "Could not parse increased risk percent: "+lines[2]);
+            }
+            try {
+                pop.setSevereIllnessPercent( Float.parseFloat(lines[3].substring( SEVERE_LABEL.length(),lines[3].length())));
+            }
+            catch( NumberFormatException nfe ){
+                System.out.println( "Could not parse severe illness percent: "+lines[3]);
+            }
+           
+            try {
+                String racialStr = lines[4].substring(RACIAL_LABEL.length(), lines[4].length());
+                String[] pairs = ObjectUtility.mapParse( racialStr );
+                Map<RacialCategory, Float> rMix = new HashMap<>();
+                for (String pair : pairs) {
+                    if ( pair.contains( "=")){
+                        String[] parts = pair.split("=");
+                        rMix.put(RacialCategory.valueOf(parts[0].trim()), Float.parseFloat(parts[1].trim()));
+                    }
+                }
+                pop.setRacialMix(rMix);
+            } 
+            catch (IllegalArgumentException iae) {
+                System.out.println("Error parsing racial mix: " + lines[4] + iae);
+            }
+            
+            try {
+                String ageStr = lines[5].substring(AGE_LABEL.length(), lines[5].length());
+                String[] pairs = ObjectUtility.mapParse( ageStr );
+                Map<AgeGroup, Float> ageMix = new HashMap<>();
+                for (String pair : pairs) {
+                     if ( pair.contains( "=")){
+                        String[] parts = pair.split("=");
+                        ageMix.put(AgeGroup.valueOf(parts[0].trim()), Float.parseFloat(parts[1].trim()));
+                     }
+                }
+                pop.setAgeMix(ageMix);
+            } 
+            catch (IllegalArgumentException iae) {
+                System.out.println("Error parsing age mix: " + lines[5] + iae);
+            }
+        }
+        else {
+            System.out.println( "Unexpected string for population: "+popString );
+        }
+        return pop;
     }
     
     

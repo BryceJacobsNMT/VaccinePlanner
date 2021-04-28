@@ -16,9 +16,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *  Test Disease.
+ *  Test Prioritization.
  */
 public class PrioritizationTest {
+    
+    private Prioritization prior;
     
     public PrioritizationTest() {
     }
@@ -33,21 +35,8 @@ public class PrioritizationTest {
     
     @Before
     public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
-    
-
-    /**
-     * Tests that a prioritization can be written to the database.
-     */
-    @Test
-    public void testPrioritizationSave() {
         //Create a prioritization
-        Prioritization prior = new Prioritization();
+        prior = new Prioritization();
         
         Map<Occupation, PriorityGroup> occupationPriority = new HashMap<>();
         occupationPriority.put( Occupation.CONSTRUCTION, PriorityGroup.EIGHT );
@@ -72,9 +61,30 @@ public class PrioritizationTest {
         agePriority.put( AgeGroup.MIDDLE_ADULT, PriorityGroup.FIVE );
         agePriority.put( AgeGroup.OLDER_ADULT, PriorityGroup.THREE );
         prior.setAgePriority( agePriority );
-  
+    }
     
-        
+    @After
+    public void tearDown() {
+    }
+    
+    /**
+     * Test writing a prioritization to a string and reading it back in.
+     */
+    @Test
+    public void testFromString(){
+        String priorString = prior.toString();
+        System.out.println( "prioritization-"+priorString);
+        Prioritization prior2 = Prioritization.fromString( priorString );
+        Assert.assertTrue( prior.equals(prior2));
+    }
+
+
+    /**
+     * Tests that a prioritization can be written to the database.
+     */
+    //@Test
+    public void testPrioritizationSave() {
+          
         HibernatePrioritizationDao dao = new HibernatePrioritizationDao();
         try {
             //Save the disease to the database.

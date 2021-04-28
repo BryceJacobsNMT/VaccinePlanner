@@ -20,6 +20,8 @@ import org.junit.Test;
  */
 public class DiseaseTest {
     
+    private Disease dis;
+    
     public DiseaseTest() {
     }
     
@@ -33,28 +35,8 @@ public class DiseaseTest {
     
     @Before
     public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
-    private DiseaseStatistic makeDiseaseStatistic( float deathRate, float hospRate, float infectRate, float spreadRate ){
-        DiseaseStatistic ds = new DiseaseStatistic();
-        ds.setDeathRate( .01f );
-        ds.setHospitalizationRate( .15f );
-        ds.setInfectionRate( 0.2f );
-        ds.setSpreadRate( 0.2f);
-        return ds;
-    }
-
-    /**
-     * Tests that a disease can be written to the database.
-     */
-    @Test
-    public void testDiseaseSave() {
-        //Create a disease
-        Disease dis = new Disease();
+         //Create a disease
+        dis = new Disease();
         
         Map<Occupation,DiseaseStatistic> occDisease = new HashMap<>();
         DiseaseStatistic ds = makeDiseaseStatistic( 0.01f, .15f, .2f, .2f );
@@ -85,8 +67,39 @@ public class DiseaseTest {
         ds = makeDiseaseStatistic( 0.005f, .13f, .11f, .12f );
         racDisease.put(RacialCategory.INDIAN, ds);
         dis.setRacialDisease(racDisease);
+    }
     
-        
+    @After
+    public void tearDown() {
+    }
+    
+    private DiseaseStatistic makeDiseaseStatistic( float deathRate, float hospRate, float infectRate, float spreadRate ){
+        DiseaseStatistic ds = new DiseaseStatistic();
+        ds.setDeathRate( .01f );
+        ds.setHospitalizationRate( .15f );
+        ds.setInfectionRate( 0.2f );
+        ds.setSpreadRate( 0.2f);
+        return ds;
+    }
+    
+    /**
+     * Test writing a population to a string and reading it back in.
+     */
+    @Test
+    public void testFromString(){
+        String disString = dis.toString();       
+        System.out.println( "Disease is "+disString);
+        Disease dis2 = Disease.fromString( disString );
+        Assert.assertTrue( dis.equals(dis2));
+    }
+
+
+    /**
+     * Tests that a disease can be written to the database.
+     */
+    //@Test
+    public void testDiseaseSave() {
+           
         HibernateDiseaseDao dao = new HibernateDiseaseDao();
         try {
             //Save the disease to the database.

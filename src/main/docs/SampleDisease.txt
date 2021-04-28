@@ -1,0 +1,6 @@
+Disease: Unnamed
+Age Disease Statistics: {}
+Increased Risk Disease Statistics: {CYSTIC_FIBROSIS=[Spread Rate: 0.2; Infection Rate: 0.2; Hospitalization Rate: 0.15; Death Rate: 0.01], ASTHMA=[Spread Rate: 0.2; Infection Rate: 0.2; Hospitalization Rate: 0.15; Death Rate: 0.01]}
+Occupation Disease Statistics: {FINANCIAL_SERVICE=[Spread Rate: 0.2; Infection Rate: 0.2; Hospitalization Rate: 0.15; Death Rate: 0.01], CITY=[Spread Rate: 0.2; Infection Rate: 0.2; Hospitalization Rate: 0.15; Death Rate: 0.01], CONSTRUCTION=[Spread Rate: 0.2; Infection Rate: 0.2; Hospitalization Rate: 0.15; Death Rate: 0.01]}
+Racial Mix Disease Statistics: {INDIAN=[Spread Rate: 0.2; Infection Rate: 0.2; Hospitalization Rate: 0.15; Death Rate: 0.01], BLACK=[Spread Rate: 0.2; Infection Rate: 0.2; Hospitalization Rate: 0.15; Death Rate: 0.01]}
+

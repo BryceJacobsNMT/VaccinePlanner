@@ -21,6 +21,8 @@ import org.junit.Test;
  */
 public class VaccineDeliveryTest {
     
+    private VaccineDelivery vd;
+    
     public VaccineDeliveryTest() {
     }
     
@@ -34,10 +36,29 @@ public class VaccineDeliveryTest {
     
     @Before
     public void setUp() {
+         //Create a VaccineDelivery
+        vd = new VaccineDelivery();
+        
+        Map<Vaccine, VaccineAvailabilityModelContinuous> vaccineAvailability = new HashMap<>();
+        VaccineAvailabilityModelContinuous mod = new VaccineAvailabilityModelContinuous();
+        mod.setInitialAmount( 250 );
+        vaccineAvailability.put( Vaccine.MODERNA, mod);
+        vd.setVaccineDeliveryAvailability( vaccineAvailability);
     }
     
     @After
     public void tearDown() {
+    }
+    
+       /**
+     * Test writing a vaccine delivery to a string and reading it back in.
+     */
+    @Test
+    public void testFromString(){
+        String vdString = vd.toString();       
+        System.out.println( "Delivery is "+vdString);
+        VaccineDelivery vd2 = VaccineDelivery.fromString( vdString );
+        Assert.assertTrue( vd.equals(vd2));
     }
     
    
@@ -45,16 +66,9 @@ public class VaccineDeliveryTest {
     /**
      * Tests that a VaccineDelivery model can be written to the database.
      */
-    @Test
+    //@Test
     public void testVaccineDeliverySave() {
-        //Create a VaccineDelivery
-        VaccineDelivery vd = new VaccineDelivery();
-        
-        Map<Vaccine, VaccineAvailabilityModelContinuous> vaccineAvailability = new HashMap<>();
-        VaccineAvailabilityModelContinuous mod = new VaccineAvailabilityModelContinuous();
-        mod.setInitialAmount( 250 );
-        vaccineAvailability.put( Vaccine.MODERNA, mod);
-        vd.setVaccineDeliveryAvailability( vaccineAvailability);
+       
         
         HibernateVaccineDeliveryDao dao = new HibernateVaccineDeliveryDao();
         try {
@@ -82,7 +96,7 @@ public class VaccineDeliveryTest {
     /**
      * Test that we can query for vaccine deliveries.
      */
-    @Test
+    //@Test
     public void testVaccineDeliveryFind(){
         HibernateVaccineDeliveryDao dao = new HibernateVaccineDeliveryDao();
         try {
