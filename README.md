@@ -16,6 +16,12 @@ The application is designed to work as a command line interface that will take t
 
 Alternatively, this application can be run as a GUI application and the results displayed as part of the built-in user interface.  The main class for the GUI version of this application is MainPanel in the edu.nmt.view package.
 
+A maven action has been added to the pom.xml file for creating a jar file with dependencies that can be used to run the application.  The nbactions.xml action, AssembleJarWithDependencies, can be used to create the jar file in the target directory.  Once the jar file has been created, the application can be run using:
+
+java -cp pathToJar/VaccinePlanner-1.1-jar-with-dependencies.jar edu.nmt.view.MainCommand -PpathToPopulationTextFile
+
+Of course, the -P option can be left out to use the default population file and/or other options could be added (see above).
+
 
 ############################################################################
 #  Original Implementation Using a Postgres Database

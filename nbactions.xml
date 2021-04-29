@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-TheWorks</actionName>
+            <displayName>TheWorks</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>verify</goal>
+                <goal>package</goal>
+                <goal>install</goal>
+                <goal>-Dmaven.test.skip=true</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-PopulationTest</actionName>
+            <displayName>TestPopulation</displayName>
+            <goals>
+                <goal>test</goal>
+                <goal>-Dtest=PopulationTest</goal>
+            </goals>
+            
+        </action>
+         <action>
+            <actionName>CUSTOM-DiseaseTest</actionName>
+            <displayName>TestDisease</displayName>
+            <goals>
+                <goal>test</goal>
+                <goal>-Dtest=DiseaseTest</goal>
+            </goals>
+            
+        </action>
+         <action>
+            <actionName>CUSTOM-VaccineDeliveryTest</actionName>
+            <displayName>TestVaccineDelivery</displayName>
+            <goals>
+                <goal>test</goal>
+                <goal>-Dtest=VaccineDeliveryTest</goal>
+            </goals>
+            
+        </action>
+         <action>
+            <actionName>CUSTOM-PrioritizationTest</actionName>
+            <displayName>TestPrioritization</displayName>
+            <goals>
+                <goal>test</goal>
+                <goal>-Dtest=PrioritizationTest</goal>
+            </goals>
+            
+        </action>
+        <action>
+            <actionName>CUSTOM-VaccineAvailabilityModelContinuousTest</actionName>
+            <displayName>TestVaccineAvailabilityModelContinuous</displayName>
+            <goals>
+                <goal>test</goal>
+                <goal>-Dtest=VaccineAvailabilityModelContinuousTest</goal>
+            </goals>
+            
+        </action>
+         <action>
+            <actionName>CUSTOM-ExampleBarChartTest</actionName>
+            <displayName>TestExampleBarChart</displayName>
+            <goals>
+                <goal>test</goal>
+                <goal>-Dtest=ExampleBarChart</goal>
+            </goals>
+            
+        </action>
+         <action>
+            <actionName>CUSTOM-ExampleStackedBarChartTest</actionName>
+            <displayName>TestExampleStackedBarChart</displayName>
+            <goals>
+                <goal>test</goal>
+                <goal>-Dtest=ExampleStackedBarChart</goal>
+            </goals>
+            
+        </action>
+         <action>
+            <actionName>CUSTOM-Assemble</actionName>
+            <displayName>AssembleJarWithDependencies</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>compile</goal>
+                <goal>assembly:single</goal>
+            </goals>
+            
+        </action>
+        <action>
+            <actionName>CUSTOM-RunPlanner</actionName>
+            <displayName>RunPlanner</displayName>
+            <goals>
+                <goal>exec:java</goal>
+            </goals>
+            <properties>
+                <exec.args>-P/home/bryce/Covid19VaccinePlanner/CSE326/VaccinePlanner/src/main/resources/SamplePopulation.txt</exec.args>
+                <exec.args>-D/home/bryce/Covid19VaccinePlanner/CSE326/VaccinePlanner/src/main/resources/SampleDisease.txt</exec.args>
+                <exec.args>-Z/home/bryce/Covid19VaccinePlanner/CSE326/VaccinePlanner/src/main/resources/SamplePrioritization.txt</exec.args>
+                <exec.args>-V/home/bryce/Covid19VaccinePlanner/CSE326/VaccinePlanner/src/main/resources/SampleVaccineDelivery.txt</exec.args>
+                <exec.args>-W/tmp/</exec.args>
+            </properties>
+        </action>
+    </actions>

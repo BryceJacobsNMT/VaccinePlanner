@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
@@ -32,6 +34,12 @@ import org.jfree.chart.JFreeChart;
  * @author bryce
  */
 public class MainCommand {
+    
+    private static final String POP_FILE = "SamplePopulation.txt";
+    private static final String DIS_FILE = "SampleDisease.txt";
+    private static final String VACC_FILE = "SampleVaccineDelivery.txt";
+    private static final String PRIOR_FILE = "SamplePrioritization.txt";
+    
     /**
      * Entry point
      * @param args - list of input files for the model.
@@ -107,8 +115,8 @@ public class MainCommand {
      * @param fileName- absolute path to the file where the graph should be persisted.
      */
     private static void writeGraph( JFreeChart graph, String fileName ){
-          //Export the chart as a PNG for use in the UI
-          System.out.println( "FileName="+fileName);
+        //Export the chart as a PNG for use in the UI
+        System.out.println( "FileName="+fileName);
         BufferedImage image = new BufferedImage( 1000, 400, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = image.createGraphics();
         g2.setRenderingHint( JFreeChart.KEY_SUPPRESS_SHADOW_GENERATION, true );
@@ -142,6 +150,7 @@ public class MainCommand {
         }
         if ( !fileExists){
             //Use the current directory
+            //URL mainURL = MainCommand.class.getClassLoader().getResource( "../SamplePopulation.txt");
             dir = new File( ".").getAbsolutePath();
             dir = dir.replaceAll( ".", "");
             System.out.println( "Using current directory as write: "+dir);
@@ -171,15 +180,51 @@ public class MainCommand {
        
         //We were either unable to read the user specified input file or one was not specified.
         if ( pop == null ){
-            System.out.println( "No user specified file; using default");
-            URL mainURL = MainCommand.class.getClassLoader().getResource( "SamplePopulation.txt");
-            System.out.println( "Main URL path is "+mainURL.getPath());
-            File popFile = new File( mainURL.getPath());
-            pop = getPopulationFromFile( popFile );
-            
+            URL mainURL = MainCommand.class.getClassLoader().getResource( POP_FILE );           
+            if ( mainURL.getProtocol().equals("jar")){
+                pop = initializePopulationFromJar();
+            }
+            else {
+                System.out.println( "Main URL path is "+mainURL.getPath());
+                File popFile = new File( mainURL.getPath());
+                pop = getPopulationFromFile( popFile );
+            }
+            System.out.println( "Pop is "+pop);
         }
         else {
             System.out.println( "Got population from user specified file");
+        }
+        return pop;
+    }
+    
+    /**
+     * Returns a Population produced from a sample file contained inside a jar file.
+     * @return - a Population.
+     */
+    public static Population initializePopulationFromJar() {
+        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(POP_FILE);
+        Population pop = new Population();
+        if ( input != null ){
+            String popStr;
+            StringBuilder buf = new StringBuilder();
+           
+            try ( BufferedReader reader = new BufferedReader(new InputStreamReader(input))){
+                while ((popStr = reader.readLine()) != null) {
+                    buf.append(popStr).append( "\n");
+                }
+                pop = Population.fromString(buf.toString());
+            } 
+            catch (IOException ioe) {
+                System.out.println("Exception reading sample population file=" + ioe);
+            } 
+            finally {
+                try {
+                    input.close();
+                } 
+                catch (IOException ioe) {
+                    System.out.println("Exception closing input stream: "+ioe);
+                }
+            }
         }
         return pop;
     }
@@ -226,14 +271,51 @@ public class MainCommand {
         //We were either unable to read the user specified input file or one was not specified.
         if ( dis == null ){
             System.out.println( "No user specified file; using default");
-            URL mainURL = MainCommand.class.getClassLoader().getResource( "SampleDisease.txt");
-            System.out.println( "Main URL path is "+mainURL.getPath());
-            File disFile = new File( mainURL.getPath());
-            dis = getDiseaseFromFile( disFile );
+            URL mainURL = MainCommand.class.getClassLoader().getResource( DIS_FILE);
+            if ( mainURL.getProtocol().equals("jar")){
+                dis = initializeDiseaseFromJar();
+            }
+            else {
+                System.out.println( "Main URL path is "+mainURL.getPath());
+                File disFile = new File( mainURL.getPath());
+                dis = getDiseaseFromFile( disFile );
+            }
             
         }
         else {
             System.out.println( "Got disease from user specified file");
+        }
+        return dis;
+    }
+    
+    /**
+     * Returns a Disease produced from a sample file contained inside a jar file.
+     * @return - a Disease.
+     */
+    public static Disease initializeDiseaseFromJar() {
+        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(DIS_FILE);
+        Disease dis = new Disease();
+        if ( input != null ){
+            String popStr;
+            StringBuilder buf = new StringBuilder();
+           
+            try ( BufferedReader reader = new BufferedReader(new InputStreamReader(input))){
+                while ((popStr = reader.readLine()) != null) {
+                    buf.append(popStr).append( "\n");
+                }
+                dis = Disease.fromString(buf.toString());
+            } 
+            catch (IOException ioe) {
+                System.out.println("Exception reading sample disease file=" + ioe);
+            } 
+            finally {
+                try {
+                    input.close();
+                } 
+                catch (IOException ioe) {
+                    System.out.println("Exception closing input stream: "+ioe);
+                }
+            }
         }
         return dis;
     }
@@ -259,14 +341,51 @@ public class MainCommand {
         //We were either unable to read the user specified input file or one was not specified.
         if ( prior == null ){
             System.out.println( "No user specified file; using default");
-            URL mainURL = MainCommand.class.getClassLoader().getResource( "SamplePrioritization.txt");
-            System.out.println( "Main URL path is "+mainURL.getPath());
-            File priorFile = new File( mainURL.getPath());
-            prior = getPrioritizationFromFile( priorFile );
+            URL mainURL = MainCommand.class.getClassLoader().getResource( PRIOR_FILE);
+            if ( mainURL.getProtocol().equals("jar")){
+                prior = initializePrioritizationFromJar();
+            }
+            else {
+                System.out.println( "Main URL path is "+mainURL.getPath());
+                File priorFile = new File( mainURL.getPath());
+                prior = getPrioritizationFromFile( priorFile );
+            }
             
         }
         else {
             System.out.println( "Got prioritization from user specified file");
+        }
+        return prior;
+    }
+    
+    /**
+     * Returns a Prioritization produced from a sample file contained inside a jar file.
+     * @return - a Prioritization.
+     */
+    public static Prioritization initializePrioritizationFromJar() {
+        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(PRIOR_FILE);
+        Prioritization prior = new Prioritization();
+        if ( input != null ){
+            String popStr;
+            StringBuilder buf = new StringBuilder();
+           
+            try ( BufferedReader reader = new BufferedReader(new InputStreamReader(input))){
+                while ((popStr = reader.readLine()) != null) {
+                    buf.append(popStr).append( "\n");
+                }
+                prior = Prioritization.fromString(buf.toString());
+            } 
+            catch (IOException ioe) {
+                System.out.println("Exception reading sample prioritization file=" + ioe);
+            } 
+            finally {
+                try {
+                    input.close();
+                } 
+                catch (IOException ioe) {
+                    System.out.println("Exception closing input stream: "+ioe);
+                }
+            }
         }
         return prior;
     }
@@ -292,14 +411,50 @@ public class MainCommand {
         //We were either unable to read the user specified input file or one was not specified.
         if ( vd == null ){
             System.out.println( "No user specified file; using default");
-            URL mainURL = MainCommand.class.getClassLoader().getResource( "SampleVaccineDelivery.txt");
-            System.out.println( "Main URL path is "+mainURL.getPath());
-            File vdFile = new File( mainURL.getPath());
-            vd = getVaccineDeliveryFromFile( vdFile );
-            
+            URL mainURL = MainCommand.class.getClassLoader().getResource( VACC_FILE);
+            if ( mainURL.getProtocol().equals("jar")){
+                vd = initializeVaccineDeliveryFromJar();
+            }
+            else {
+                System.out.println( "Main URL path is "+mainURL.getPath());
+                File vdFile = new File( mainURL.getPath());
+                vd = getVaccineDeliveryFromFile( vdFile );
+            }         
         }
         else {
             System.out.println( "Got vaccine delivery from user specified file");
+        }
+        return vd;
+    }
+    
+    /**
+     * Returns a VaccineDelivery produced from a sample file contained inside a jar file.
+     * @return - a VaccineDelivery.
+     */
+    public static VaccineDelivery initializeVaccineDeliveryFromJar() {
+        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(VACC_FILE);
+        VaccineDelivery vd = new VaccineDelivery();
+        if ( input != null ){
+            String popStr;
+            StringBuilder buf = new StringBuilder();
+           
+            try ( BufferedReader reader = new BufferedReader(new InputStreamReader(input))){
+                while ((popStr = reader.readLine()) != null) {
+                    buf.append(popStr).append( "\n");
+                }
+                vd = VaccineDelivery.fromString(buf.toString());
+            } 
+            catch (IOException ioe) {
+                System.out.println("Exception reading sample vaccine delivery file=" + ioe);
+            } 
+            finally {
+                try {
+                    input.close();
+                } 
+                catch (IOException ioe) {
+                    System.out.println("Exception closing input stream: "+ioe);
+                }
+            }
         }
         return vd;
     }
@@ -320,6 +475,7 @@ public class MainCommand {
         }
         return pop;     
     }
+    
     
      /**
      * Constructs a disease from a text file.
