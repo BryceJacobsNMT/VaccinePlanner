@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<statistics>
+    <dayCount>31</dayCount>
+    <totalDeaths>11</totalDeaths>
+    <totalHospitalizations>72</totalHospitalizations>
+    <totalInfections>987</totalInfections>
+    <totalPartiallyVacced>123</totalPartiallyVacced>
+    <totalPopulationSize>1000</totalPopulationSize>
+    <totalVacced>877</totalVacced>
+</statistics>

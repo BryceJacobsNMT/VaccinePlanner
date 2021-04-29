@@ -11,18 +11,20 @@ import edu.nmt.model.Grapher;
 import edu.nmt.model.Population;
 import edu.nmt.model.Prediction;
 import edu.nmt.model.Prioritization;
+import edu.nmt.model.Statistics;
 import edu.nmt.model.VaccineDelivery;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.util.Arrays;
 import javax.imageio.ImageIO;
+import javax.xml.bind.JAXBException;
 import org.jfree.chart.JFreeChart;
 
 /**
@@ -70,16 +72,33 @@ public class MainCommand {
         //Run the model with the given inputs.
         Prediction predict = new Prediction( pop, disease, vd, priority );
         DailyInfectionStatus[] stats = predict.getDailyInfectionStats();
-        System.out.println( "Got stats ");
         
         //Generate some graphs and statistics and persist them.
         JFreeChart caseGraph = Grapher.generateCaseGraph( stats);
-        System.out.println( "Made graph");
-        //writeGraph( caseGraph, writeDirectory +"DailyCaseCounts.png");
+        writeGraph( caseGraph, writeDirectory +"DailyCaseCounts.png");
         JFreeChart cumGraph = Grapher.generateCumulativeCaseGraph( stats );
-        //writeGraph( cumGraph, writeDirectory+"CumulativeCaseCounts.png");
+        writeGraph( cumGraph, writeDirectory+"CumulativeCaseCounts.png");
         JFreeChart vacGraph = Grapher.generateVaccineAvailabilityGraph( vd, stats.length );
         writeGraph( vacGraph, writeDirectory+"VaccineAvailability.png");
+        
+        //Write an XML file containing summary statistics.
+        Statistics statistics = new Statistics();
+        statistics.computeStatistics(stats);
+        statistics.setTotalPopulationSize( predict.getPopulationSize() );
+        statistics.setTotalInfections( predict.getInfectedSize());
+        statistics.setTotalHospitalizations( predict.getHospitalizedSize());
+        try {
+            String summaryStats = statistics.toXML();
+            System.out.println( "Summary stats are: "+summaryStats);
+            try (BufferedWriter writer = new BufferedWriter( new FileWriter(writeDirectory + "SummaryStatistics.xml"))) {
+                writer.write(summaryStats);
+            }
+        }
+        catch( JAXBException | IOException je ){
+            System.out.println( "Could not write summary statistics to a file: "+je);
+        }
+      
+        
     }
     
     /**

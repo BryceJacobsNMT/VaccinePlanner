@@ -78,7 +78,6 @@ public class DiseaseTest {
         ds.setDeathRate( .01f );
         ds.setHospitalizationRate( .15f );
         ds.setInfectionRate( 0.2f );
-        ds.setSpreadRate( 0.2f);
         return ds;
     }
     

@@ -8,8 +8,10 @@ package edu.nmt.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Produces a model production based on input information.
@@ -28,37 +30,49 @@ public class Prediction {
     private final Prioritization priority;
     
     private final List<Person> people;
+    private final Set<Integer> infectedIndices;
+    private final Set<Integer> hospitalizedIndices;
     private final DailyInfectionStatus[] dailyInfectionStatus;
     
-    
+    /**
+     * Makes a prediction about the spread of a disease based on the input parameters.
+     * @param pop - description of a population of people.
+     * @param dis - contains disease information such as how spreadable it is.
+     * @param vd - information about what vaccines will be delivered when.
+     * @param prior - information about when various groups of people in the population will be vaccinated.
+     */
     public Prediction( Population pop, Disease dis, VaccineDelivery vd, Prioritization prior ){
         population = pop;
         disease = dis;
         delivery = vd;
         priority = prior;
         
+        infectedIndices = new HashSet<>();
+        hospitalizedIndices = new HashSet<>();
+        
         //Initialize the people.
         people = new ArrayList<>();
         initPeople();
-        System.out.println( "People initialized first person="+people.get(0));
         
         //Sort the people by priority so they will be in the order they should be vaccinated in.
         Collections.sort( people, new PersonCompare() );
-        System.out.println( "People sorted");
         
         //Data structure to map the status of the infection.
         dailyInfectionStatus = new DailyInfectionStatus[FORECAST_LENGTH];
         
         //Model the disease spread
-        System.out.println( "Computing spread");
         computeTheSpread();
-        
-        System.out.println( "Infection Status:");
-        for ( int i = 0; i < FORECAST_LENGTH; i++ ){
-            System.out.println( "Day="+i+" status="+dailyInfectionStatus[i]);
+    }
+    
+    /**
+     * Forecasts the spread of the disease.
+     */
+    private void computeTheSpread() {
+        for (int i = 0; i < FORECAST_LENGTH; i++) {
+            infectPeople(i);
+            vaccinatePeople(i);
+            storeStats( i );
         }
-        
-       
     }
     
     /**
@@ -67,6 +81,45 @@ public class Prediction {
      */
     public DailyInfectionStatus[] getDailyInfectionStats(){
         return dailyInfectionStatus;
+    }
+    
+    /**
+     * Returns the total number of people who were hospitalized.
+     * @return - how many people were hospitalized. 
+     */
+    public int getHospitalizedSize(){
+        return hospitalizedIndices.size();
+    }
+    
+    /**
+     * Returns the total number of people who can still catch the disease.
+     * @return - the total number of people who could still catch the disease.
+     */
+    private int getInfectibleCount() {
+        int count = 0;
+        for (int i = 0; i < people.size(); i++) {
+            if (people.get(i).getDiseaseStatus() == DiseaseStatus.NOT_EXPOSED
+                    && people.get(i).getVaccineStatus() != VaccineStatus.VACCINATED) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    /**
+     * Returns the total number of people who were infected.
+     * @return - how many people were infected. 
+     */
+    public int getInfectedSize(){
+        return infectedIndices.size();
+    }
+    
+    /**
+     * Returns the total number of people in the population.
+     * @return - the population size. 
+     */
+    public int getPopulationSize(){
+        return people.size();
     }
     
     /**
@@ -83,10 +136,8 @@ public class Prediction {
                     if ((day - person.getInfectDay()) < INFECTION_LENGTH) {
                         //Infect the required number of people.
                         float infectionRate = disease.getInfectionRate(person);
-                        System.out.println( "InfectionRate="+infectionRate);
                         int infectPeopleCount = (int) Math.round(infectionRate * 100 / INFECTION_LENGTH);
                         int infectableCount = getInfectibleCount();
-                        System.out.println( "infectPeopleCount="+infectPeopleCount);
                         if (infectableCount == 0) {
                             break;
                         }
@@ -105,7 +156,8 @@ public class Prediction {
                                 }
                             }
                         }
-                    } //No longer infectious; set them to recovered.
+                    } 
+                    //No longer infectious; set them to recovered.
                     else {
                         person.setDiseaseStatus(DiseaseStatus.RECOVERED);
                     }
@@ -135,6 +187,97 @@ public class Prediction {
         }
     }
     
+     /**
+     * Initialize the people.
+     */
+    private void initPeople(){
+         //Initialize the people.
+        for ( int i= 0; i < POPULATION_SIZE; i++ ){
+            people.add( new Person());
+        }
+        population.initialize( people );
+        
+        //Randomly pick people to be ill and in the hospital with an infection.
+        //Use an infection day up to two weeks in the past.
+        Random r = new Random( System.currentTimeMillis());
+        List<Person> infected = new ArrayList<>();
+        while ( infected.size() < INITIAL_ILL ){
+            int index = r.nextInt( people.size());
+            if ( people.get(index).getDiseaseStatus() == DiseaseStatus.getDefault()){
+                people.get(index).setDiseaseStatus( DiseaseStatus.INFECTED );
+                int infectDay = r.nextInt( 14 );
+                people.get(index).setInfectDay( -1 * infectDay );
+                infected.add( people.get(index));
+            }
+        }
+
+        int hospCount = 0;       
+        while (hospCount < INITIAL_HOSP ){
+            int index = r.nextInt( infected.size());
+            if ( infected.get(index).getDiseaseStatus() == DiseaseStatus.INFECTED ){
+                infected.get(index).setDiseaseStatus( DiseaseStatus.HOSPITALIZED );
+                hospCount++;
+            }
+        }
+    }
+    
+    /**
+     * Store the daily disease statistics.
+     * @param day - the model day.
+     */
+    private void storeStats( int day){
+        this.dailyInfectionStatus[day] = new DailyInfectionStatus();
+        int deathCount = 0;
+        int hospCount = 0;
+        int infectCount = 0;
+        int vaccinatedCount = 0;
+        int partiallyVaccinatedCount = 0;
+        int recoveredCount = 0;
+        
+        for ( int i = 0; i < people.size(); i++ ){
+            Person person = people.get(i);
+            //Disease status
+            DiseaseStatus stat = person.getDiseaseStatus();
+            if ( null != stat )
+                switch (stat) {
+                case DEAD:
+                    deathCount++;
+                    break;
+                case HOSPITALIZED:                   
+                    hospCount++;
+                    hospitalizedIndices.add(i);
+                    break;
+                case INFECTED:
+                    infectCount++;
+                    infectedIndices.add(i);              
+                    break;
+                case RECOVERED:
+                    recoveredCount++;
+                default:
+                    break;
+            }
+            
+            //Vaccinated status
+            VaccineStatus vStat = person.getVaccineStatus();
+            if ( vStat == VaccineStatus.VACCINATED ){
+                vaccinatedCount++;
+            }
+            else if ( vStat == VaccineStatus.PARTIALLY_VACCINATED ){
+                partiallyVaccinatedCount++;
+            }           
+        }
+        this.dailyInfectionStatus[day].setDeathCount( deathCount );
+        this.dailyInfectionStatus[day].setHospCount( hospCount );
+        this.dailyInfectionStatus[day].setInfectionCount( infectCount );
+        this.dailyInfectionStatus[day].setRecoveredCount( recoveredCount );
+        this.dailyInfectionStatus[day].setVaccinatedCount( vaccinatedCount );
+        this.dailyInfectionStatus[day].setPartiallyVaccinatedCount( partiallyVaccinatedCount );
+    }
+    
+    /**
+     * Decide who should get vaccinated on the specified day.
+     * @param day - a specific day in the model.
+     */
     private void vaccinatePeople(int day) {
         //Loop through and vaccinate as many people as we can.
         for (Vaccine vac : Vaccine.values()) {
@@ -179,92 +322,6 @@ public class Prediction {
                 }
             }
         }
-    }
-    
-    /**
-     * Store the daily disease statistics.
-     * @param day - the model day.
-     */
-    private void storeStats( int day ){
-        this.dailyInfectionStatus[day] = new DailyInfectionStatus();
-        int deathCount = 0;
-        int hospCount = 0;
-        int infectCount = 0;
-        for ( Person person : people ){
-            DiseaseStatus stat = person.getDiseaseStatus();
-            if ( stat == DiseaseStatus.DEAD ){
-                deathCount++;
-            }
-            else if ( stat == DiseaseStatus.HOSPITALIZED ){
-                hospCount++;
-            }
-            else if ( stat == DiseaseStatus.INFECTED ){
-                infectCount++;
-            }
-        }
-        this.dailyInfectionStatus[day].setDeathCount( deathCount );
-        this.dailyInfectionStatus[day].setHospCount( hospCount );
-        this.dailyInfectionStatus[day].setInfectionCount( infectCount );
-    }
-
-    private void computeTheSpread() {
-
-        for (int i = 0; i < FORECAST_LENGTH; i++) {
-            infectPeople(i);
-            vaccinatePeople(i);
-            storeStats( i );
-        }
-    }
-
-    private int getInfectibleCount() {
-        int count = 0;
-        for (int i = 0; i < people.size(); i++) {
-            if (people.get(i).getDiseaseStatus() == DiseaseStatus.NOT_EXPOSED
-                    && people.get(i).getVaccineStatus() != VaccineStatus.VACCINATED) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    /**
-     * Initialize the people.
-     */
-    private void initPeople(){
-         //Initialize the people.
-        for ( int i= 0; i < POPULATION_SIZE; i++ ){
-            people.add( new Person());
-        }
-        population.initialize( people );
-        System.out.println( "Initialized people");
-        
-        //Randomly pick people to be ill and in the hospital with an infection.
-        //Use an infection day up to two weeks in the past.
-        Random r = new Random( System.currentTimeMillis());
-        List<Person> infected = new ArrayList<>();
-        System.out.println( "Infecting people");
-        while ( infected.size() < INITIAL_ILL ){
-            int index = r.nextInt( people.size());
-            System.out.println( "index="+index+" diseaseStatus="+people.get(index).getDiseaseStatus());
-            if ( people.get(index).getDiseaseStatus() == DiseaseStatus.getDefault()){
-                people.get(index).setDiseaseStatus( DiseaseStatus.INFECTED );
-                int infectDay = r.nextInt( 14 );
-                people.get(index).setInfectDay( -1 * infectDay );
-                infected.add( people.get(index));
-            }
-        }
-        System.out.println( "Hospitalizing people number infected="+infected.size());
-        int hospCount = 0;
-        
-        while (hospCount < INITIAL_HOSP ){
-            int index = r.nextInt( infected.size());
-            System.out.println("index="+index+" diseaseStatus="+people.get(index).getDiseaseStatus());
-            if ( infected.get(index).getDiseaseStatus() == DiseaseStatus.INFECTED ){
-                infected.get(index).setDiseaseStatus( DiseaseStatus.HOSPITALIZED );
-                hospCount++;
-            }
-        }
-        System.out.println( "Finished hopsitalizing popel");
     }
     
     /**

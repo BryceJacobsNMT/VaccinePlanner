@@ -5,6 +5,7 @@
  */
 package edu.nmt.model;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,22 +14,20 @@ import javax.persistence.Table;
 
 
 /**
- *
+ * Represents how contagious a disease is for a particular population group.
  * @author bryce
  */
 @Entity
 @Table( name="diseasestatistic")
-public class DiseaseStatistic {
+public class DiseaseStatistic implements Serializable {
      @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
     private float infectionRate;
     private float hospitalizationRate;
     private float deathRate;
-    private float spreadRate;
     
     private static final String DEATH_LABEL = "Death Rate: ";
-    private static final String SPREAD_LABEL = "Spread Rate: ";
     private static final String INFECT_LABEL = "Infection Rate: ";
     private static final String HOSP_LABEL = "Hospitalization Rate: ";
     
@@ -47,35 +46,40 @@ public class DiseaseStatistic {
     public float getHospitalizationRate(){
         return hospitalizationRate;
     }
+    
+    /**
+     * Returns the percentage of people who die after being hospitalized.
+     * @return 
+     */
     public float getDeathRate(){
         return deathRate;
     }
     
     /**
-     * Returns the percentage of people that are exposed to the disease from an infected person.
-     * @return 
+     * Sets the percentage of people who die from the disease after being hospitalized.
+     * @param deathRate - the percentage of people who die from the disease after being hospitalized.
      */
-    public float getSpreadRate(){
-        return spreadRate;
-    }
-    
     public void setDeathRate( float deathRate ){
         this.deathRate = deathRate;
     }
     
+    /**
+     * Sets the percentage of infected people who are hospitalized.
+     * @param hospRate - the percentage of infected people who are hospitalized.
+     */
     public void setHospitalizationRate( float hospRate ){
         this.hospitalizationRate = hospRate;
     }
     
+    /**
+     * Sets the percentage of people each infected person passes the disease to.
+     * @param infectRate - the disease infection rate.
+     */
     public void setInfectionRate( float infectRate ){
         this.infectionRate = infectRate;
     }
     
-    public void setSpreadRate( float spreadRate ){
-        this.spreadRate = spreadRate;
-    }
-    
-     @Override
+    @Override
     public boolean equals( Object o ){
         boolean equalObs = false;
         if ( o instanceof DiseaseStatistic ){
@@ -84,9 +88,7 @@ public class DiseaseStatistic {
             if ( Math.abs( infectionRate - otherStat.infectionRate) < ERR ){
                 if ( Math.abs( hospitalizationRate - otherStat.hospitalizationRate ) < ERR ){
                     if ( Math.abs( deathRate - otherStat.deathRate ) < ERR ){
-                        if ( Math.abs( spreadRate - otherStat.spreadRate ) < ERR ){
-                            equalObs = true;
-                        }
+                        equalObs = true;
                     }
                 }
             }
@@ -100,7 +102,6 @@ public class DiseaseStatistic {
         int base = Float.hashCode(deathRate );
         base = MULT * base + Float.hashCode( hospitalizationRate );
         base = MULT * base + Float.hashCode( infectionRate );
-        base = MULT * base + Float.hashCode( spreadRate );
        return base;       
     }
     
@@ -109,7 +110,6 @@ public class DiseaseStatistic {
         StringBuilder build = new StringBuilder();
         build.append("[");
         final String COLON = "; ";
-        build.append( SPREAD_LABEL).append(spreadRate).append( COLON );
         build.append( INFECT_LABEL).append(infectionRate).append( COLON );
         build.append( HOSP_LABEL ).append(hospitalizationRate ).append( COLON );
         build.append( DEATH_LABEL ).append( deathRate ).append( "]");
@@ -118,7 +118,6 @@ public class DiseaseStatistic {
     
     public static DiseaseStatistic getDefault(){
         DiseaseStatistic stat = new DiseaseStatistic();
-        stat.setSpreadRate(0.3f);
         stat.setInfectionRate( 0.02f);
         stat.setHospitalizationRate( 0.15f);
         stat.setDeathRate(0.25f);
@@ -136,34 +135,27 @@ public class DiseaseStatistic {
         statString = statString.replaceAll( "\\]", "");
         String[] lines = statString.split( "; ");
         
-        if ( lines.length == 4 ){
+        if ( lines.length == 3 ){
             
             try {
-                stat.setSpreadRate( Float.parseFloat(lines[0].substring( SPREAD_LABEL.length(),lines[0].length()).trim()));
+                stat.setInfectionRate( Float.parseFloat(lines[0].substring( INFECT_LABEL.length(),lines[0].length()).trim()));
             }
             catch( NumberFormatException nfe ){
-                System.out.println( "Could not parse spread rate: "+lines[0]);
-            }
-            
-            try {
-                stat.setInfectionRate( Float.parseFloat(lines[1].substring( INFECT_LABEL.length(),lines[1].length()).trim()));
-            }
-            catch( NumberFormatException nfe ){
-                System.out.println( "Could not infection rate: "+lines[1]);
+                System.out.println( "Could not infection rate: "+lines[0]);
             }
             
             try {
-                stat.setHospitalizationRate( Float.parseFloat(lines[2].substring( HOSP_LABEL.length(),lines[2].length()).trim()));
+                stat.setHospitalizationRate( Float.parseFloat(lines[1].substring( HOSP_LABEL.length(),lines[1].length()).trim()));
             }
             catch( NumberFormatException nfe ){
-                System.out.println( "Could not hospitalization rate: "+lines[2]);
+                System.out.println( "Could not hospitalization rate: "+lines[1]);
             }
             
             try {
-                stat.setDeathRate( Float.parseFloat(lines[3].substring( DEATH_LABEL.length(),lines[3].length()).trim()));
+                stat.setDeathRate( Float.parseFloat(lines[2].substring( DEATH_LABEL.length(),lines[2].length()).trim()));
             }
             catch( NumberFormatException nfe ){
-                System.out.println( "Could not death rate: "+lines[3]);
+                System.out.println( "Could not death rate: "+lines[2]);
             }
         }
         else {

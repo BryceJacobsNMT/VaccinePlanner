@@ -5,6 +5,8 @@
  */
 package edu.nmt.model;
 
+import edu.nmt.util.ObjectUtility;
+
 /**
  * Represents a person in the hypothetical population
  * @author bryce
@@ -22,6 +24,9 @@ public class Person {
     private SevereIllness illness;
     private Vaccine vaccine;
     
+    /**
+     * Constructor.
+     */
     public Person(){
         diseaseStatus = DiseaseStatus.getDefault();
         occupation = Occupation.getDefault();
@@ -130,6 +135,7 @@ public class Person {
         vaccineDay = day;
     }
 
+    @Override
     public String toString(){
         StringBuilder build = new StringBuilder();
         final String EOL = "\n";
@@ -145,5 +151,53 @@ public class Person {
         build.append( "Severe Illness: ").append( illness ).append( EOL );
         build.append( "Vaccine: ").append( vaccine ).append( EOL );
         return build.toString();
+    }
+    
+    @Override
+    public boolean equals( Object other ){
+        boolean equalObs = false;
+        if ( other instanceof Person ){
+            Person oPerson = (Person)other;
+            if ( this.diseaseStatus == oPerson.diseaseStatus ){
+                if ( this.vaccineStatus == oPerson.vaccineStatus ){
+                    if ( this.infectDay == oPerson.infectDay ){
+                        if ( this.vaccineDoses == oPerson.vaccineDoses ){
+                            if ( this.occupation == oPerson.occupation ){
+                                if ( this.ageGroup == oPerson.ageGroup ){
+                                    if ( this.increasedRisk == oPerson.increasedRisk){
+                                        if ( this.race == oPerson.race ){
+                                            if ( this.illness == oPerson.illness ){
+                                                if ( this.vaccine == oPerson.vaccine ){
+                                                    equalObs = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return equalObs;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = 17;
+        final int MULT = 3;
+        result = result * MULT + ObjectUtility.hashCode(diseaseStatus);
+        result = result * MULT + ObjectUtility.hashCode(vaccineStatus);
+        result = result * MULT + infectDay;
+        result = result * MULT + vaccineDoses;
+        result = result * MULT + vaccineDay;
+        result = result * MULT + ObjectUtility.hashCode( occupation );
+        result = result * MULT + ObjectUtility.hashCode( ageGroup );
+        result = result * MULT + ObjectUtility.hashCode( increasedRisk );
+        result = result * MULT + ObjectUtility.hashCode( race );
+        result = result * MULT + ObjectUtility.hashCode( illness );
+        result = result * MULT + ObjectUtility.hashCode( vaccine );
+        return result;
     }
 }

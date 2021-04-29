@@ -6,7 +6,7 @@
 package edu.nmt.model;
 
 /**
- *
+ * Represents a person's status as to being vaccinated.
  * @author bryce
  */
 public enum VaccineStatus {
@@ -14,6 +14,10 @@ public enum VaccineStatus {
     PARTIALLY_VACCINATED,
     VACCINATED;
     
+    /**
+     * Returns the default vaccinated status.
+     * @return - the default vaccinated status.
+     */
     public static VaccineStatus getDefault(){
         return NOT_VACCINATED;
     } 

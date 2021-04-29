@@ -21,17 +21,29 @@ public enum AgeGroup {
     private final String description;
     private final int contactCountAdjustment;
     
+    /**
+     * Constructor.
+     * @param descript - description of the age group.
+     * @param adjustment - adjustment to the average number of contacts.
+     */
     private AgeGroup( String descript, int adjustment){
         description = descript;
         contactCountAdjustment = adjustment;
     }
     
+    /**
+     * Return the default AgeGroup.
+     * @return - the default AgeGroup.
+     */
     public static AgeGroup getDefault(){
         return ADULT;
     }
     
+    /**
+     * Return the contact adjustment for the age group.
+     * @return - the AgeGroup contact adjustment.
+     */
     public int getContactCountAdjustment(){
         return contactCountAdjustment;
-    }
-    
+    }   
 }
