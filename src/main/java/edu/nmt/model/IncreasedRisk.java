@@ -10,15 +10,30 @@ package edu.nmt.model;
  * @author bryce
  */
 public enum IncreasedRisk {
-    ASTHMA,
-    CEREBROVASCULAR_DISEASE,
-    HYPERTENSION,
-    CYSTIC_FIBROSIS,
-    IMMUNOCOMPROMISED,
-    LIVER_DISEASE,
-    NEUROTOLOGIC_CONDITION,
-    OVERWEIGHT,
-    PULMONARY_FIBROSIS,
-    THALASSEMIA,
-    TYPE_1_DIABETES;
+    ASTHMA(0),
+    CEREBROVASCULAR_DISEASE(-10),
+    HYPERTENSION(0),
+    CYSTIC_FIBROSIS(-10),
+    IMMUNOCOMPROMISED(-10),
+    LIVER_DISEASE(-10),
+    NEUROTOLOGIC_CONDITION(-10),
+    OVERWEIGHT(0),
+    PULMONARY_FIBROSIS(-10),
+    THALASSEMIA(-10),
+    TYPE_1_DIABETES(0),
+    NONE(0);
+    
+    private int contactCountAdjustment;
+    
+    private IncreasedRisk( int adjust){
+        contactCountAdjustment = adjust;
+    }
+    
+    public static IncreasedRisk getDefault(){
+        return NONE;
+    }
+    
+    public int getContactCountAdjustment(){
+        return contactCountAdjustment;
+    }
 }

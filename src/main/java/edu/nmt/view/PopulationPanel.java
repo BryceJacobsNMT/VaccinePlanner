@@ -86,7 +86,6 @@ public class PopulationPanel extends JPanel{
     //hard-coded for the purpose of producing results.
     public static Population getPopulationFromFile( String fileName){
         Population pop = new Population();
-        pop.setChronicMedicalConditionPercent(.1f);
         pop.setIncreasedRiskPercent(.2f);
         pop.setSevereIllnessPercent(.05f);
         final float FIXED_PERCENT = .2f;

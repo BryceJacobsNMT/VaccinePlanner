@@ -47,11 +47,46 @@ public class Disease implements Serializable {
     
     public Disease(){       
         occupationDisease = new HashMap<>();
+        initOccupationDisease();
         increasedRiskDisease = new HashMap<>();
+        initIncreasedRiskDisease();
         severeIllnessDisease = new HashMap<>();
+        initSevereIllnessDisease();
         racialDisease = new HashMap<>();
+        initRacialDisease();
         ageDisease = new HashMap<>();
+        initAgeDisease();
         name = ObjectUtility.DEFAULT_NAME;
+    }
+    
+    private void initOccupationDisease(){
+        for ( Occupation occ : Occupation.values()){
+            occupationDisease.put( occ, DiseaseStatistic.getDefault());
+        }
+    }
+    
+     private void initIncreasedRiskDisease(){
+        for ( IncreasedRisk ir : IncreasedRisk.values()){
+            increasedRiskDisease.put( ir, DiseaseStatistic.getDefault());
+        }
+    }
+     
+     private void initSevereIllnessDisease(){
+        for ( SevereIllness si : SevereIllness.values()){
+            severeIllnessDisease.put( si, DiseaseStatistic.getDefault());
+        }
+    }
+    
+     private void initRacialDisease(){
+        for ( RacialCategory rc : RacialCategory.values()){
+            racialDisease.put( rc, DiseaseStatistic.getDefault());
+        }
+    }
+     
+    private void initAgeDisease(){
+        for ( AgeGroup ag : AgeGroup.values()){
+            ageDisease.put( ag, DiseaseStatistic.getDefault());
+        }
     }
     
     public Map<AgeGroup,DiseaseStatistic> getAgeDisease(){
@@ -70,6 +105,86 @@ public class Disease implements Serializable {
         return name;
     }
     
+     /**
+     * Get the percentage of people with the same profile as the person passed in who will be infected.
+     * @param person - a Person
+     * @return - the likelihood the person will be infected with the disease.
+     */
+    public float getInfectionRate( Person person ){
+        float baseRate = ageDisease.get( person.getAgeGroup()).getInfectionRate();
+        float occupationRate = occupationDisease.get( person.getOccupation()).getInfectionRate();
+        if ( occupationRate > baseRate ){
+            baseRate = occupationRate;
+        }
+        float illRate = severeIllnessDisease.get( person.getSevereIllness()).getInfectionRate();
+        if ( illRate > baseRate ){
+            baseRate = illRate;
+        }
+        float raceRate = racialDisease.get( person.getRacialCategory()).getInfectionRate();
+        if ( raceRate > baseRate ){
+            baseRate = raceRate;
+        }
+        float riskRate = increasedRiskDisease.get(person.getIncreasedRisk()).getInfectionRate();
+        if ( riskRate > baseRate ){
+            baseRate = riskRate;
+        }
+        return baseRate;
+    }
+    
+    /**
+     * Get the percentage of people with the same profile as the person passed in who become hospitalized with
+     * the disease.
+     * @param person - a Person
+     * @return - the likelihood the person will be hospitalized if they are infected with the disease.
+     */
+    public float getHospitalizationRate( Person person ){
+        float baseRate = ageDisease.get( person.getAgeGroup()).getHospitalizationRate();
+        float occupationRate = occupationDisease.get( person.getOccupation()).getHospitalizationRate();
+        if ( occupationRate > baseRate ){
+            baseRate = occupationRate;
+        }
+        float illRate = severeIllnessDisease.get( person.getSevereIllness()).getHospitalizationRate();
+        if ( illRate > baseRate ){
+            baseRate = illRate;
+        }
+        float raceRate = racialDisease.get( person.getRacialCategory()).getHospitalizationRate();
+        if ( raceRate > baseRate ){
+            baseRate = raceRate;
+        }
+        float riskRate = increasedRiskDisease.get(person.getIncreasedRisk()).getHospitalizationRate();
+        if ( riskRate > baseRate ){
+            baseRate = riskRate;
+        }
+        return baseRate;
+    }
+    
+    /**
+     * Get the percentage of people with the same profile as the person passed in who will die if they
+     * are hospitalized
+     * @param person - a Person
+     * @return - the likelihood the person will die if they are hospitalized with the disease.
+     */
+    public float getDeathRate( Person person ){
+        float baseRate = ageDisease.get( person.getAgeGroup()).getHospitalizationRate();
+        float occupationRate = occupationDisease.get( person.getOccupation()).getDeathRate();
+        if ( occupationRate > baseRate ){
+            baseRate = occupationRate;
+        }
+        float illRate = severeIllnessDisease.get( person.getSevereIllness()).getDeathRate();
+        if ( illRate > baseRate ){
+            baseRate = illRate;
+        }
+        float raceRate = racialDisease.get( person.getRacialCategory()).getDeathRate();
+        if ( raceRate > baseRate ){
+            baseRate = raceRate;
+        }
+        float riskRate = increasedRiskDisease.get(person.getIncreasedRisk()).getDeathRate();
+        if ( riskRate > baseRate ){
+            baseRate = riskRate;
+        }
+        return baseRate;
+    }
+    
     public Map<Occupation,DiseaseStatistic> getOccupationDisease(){
         return occupationDisease;
     }
@@ -84,6 +199,7 @@ public class Disease implements Serializable {
     
     public void setAgeDisease( Map<AgeGroup,DiseaseStatistic> ageMap ){
         ageDisease.clear();
+        initAgeDisease();
         ageDisease.putAll( ageMap );
     }
     
@@ -93,6 +209,7 @@ public class Disease implements Serializable {
     
     public void setIncreasedRiskDisease( Map<IncreasedRisk,DiseaseStatistic> riskMap ){
         increasedRiskDisease.clear();
+        initIncreasedRiskDisease();
         increasedRiskDisease.putAll( riskMap );
     }
     
@@ -102,16 +219,19 @@ public class Disease implements Serializable {
     
     public void setOccupationDisease( Map<Occupation,DiseaseStatistic> occupMap){
         occupationDisease.clear();
+        initOccupationDisease();
         occupationDisease.putAll( occupMap );
     }
     
     public void setRacialDisease( Map<RacialCategory, DiseaseStatistic> racialMap ){
         racialDisease.clear();
+        initRacialDisease();
         racialDisease.putAll( racialMap );
     }
     
     public void setSevereIllnessDisease( Map<SevereIllness,DiseaseStatistic> diseaseMap){
         severeIllnessDisease.clear();
+        initSevereIllnessDisease();
         severeIllnessDisease.putAll( diseaseMap );
     }
     

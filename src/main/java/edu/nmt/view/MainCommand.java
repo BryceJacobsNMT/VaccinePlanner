@@ -5,15 +5,25 @@
  */
 package edu.nmt.view;
 
+import edu.nmt.model.DailyInfectionStatus;
 import edu.nmt.model.Disease;
+import edu.nmt.model.Grapher;
 import edu.nmt.model.Population;
+import edu.nmt.model.Prediction;
 import edu.nmt.model.Prioritization;
 import edu.nmt.model.VaccineDelivery;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.Arrays;
+import javax.imageio.ImageIO;
+import org.jfree.chart.JFreeChart;
 
 /**
  * Application entry point for command line version.
@@ -49,6 +59,78 @@ public class MainCommand {
         //VaccineDelivery file will be used.
         VaccineDelivery vd = initializeVaccineDelivery(args);
         System.out.println( "Vaccine Delivery is: "+vd);
+        
+        //To specify the location where output files should be written a command line
+        //argument of the form -Wdirectory is expected.  The directory should be an absolute
+        //path ending in a path separator, i.e., '/'.  If no location is provided, the
+        //current directory will be used.
+        String writeDirectory = initializeWriteDirectory(args);
+        System.out.println( "Write directory is "+writeDirectory);
+        
+        //Run the model with the given inputs.
+        Prediction predict = new Prediction( pop, disease, vd, priority );
+        DailyInfectionStatus[] stats = predict.getDailyInfectionStats();
+        System.out.println( "Got stats ");
+        
+        //Generate some graphs and statistics and persist them.
+        JFreeChart caseGraph = Grapher.generateCaseGraph( stats);
+        System.out.println( "Made graph");
+        //writeGraph( caseGraph, writeDirectory +"DailyCaseCounts.png");
+        JFreeChart cumGraph = Grapher.generateCumulativeCaseGraph( stats );
+        //writeGraph( cumGraph, writeDirectory+"CumulativeCaseCounts.png");
+        JFreeChart vacGraph = Grapher.generateVaccineAvailabilityGraph( vd, stats.length );
+        writeGraph( vacGraph, writeDirectory+"VaccineAvailability.png");
+    }
+    
+    /**
+     * Write a graph as a 'png' file to the indicated file.
+     * @param graph - the graph to persist.
+     * @param fileName- absolute path to the file where the graph should be persisted.
+     */
+    private static void writeGraph( JFreeChart graph, String fileName ){
+          //Export the chart as a PNG for use in the UI
+          System.out.println( "FileName="+fileName);
+        BufferedImage image = new BufferedImage( 1000, 400, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+        g2.setRenderingHint( JFreeChart.KEY_SUPPRESS_SHADOW_GENERATION, true );
+        Rectangle r = new Rectangle( 0, 0, 600, 400 );
+        graph.draw( g2, r );             
+        try {
+            //Save to a file
+            File f = new File(fileName);
+            BufferedImage chartImage = graph.createBufferedImage(1600, 400, null);
+            ImageIO.write(chartImage, "png", f); 
+            System.out.println( "Wrote graph");
+        } 
+        catch (IOException ioe) {
+            System.out.println("Could not write graph: "+ioe);
+        }       
+    }
+    
+    /**
+     * Returns the directory where output files should be written.
+     * @param args - command line arguments.
+     * @return - directory where output files should be written.
+     */
+    private static String initializeWriteDirectory( String[] args ){
+        String dir = getUserSpecifiedFile( args, "-W");
+        boolean fileExists = false;
+        if ( dir != null ){
+            File file = new File( dir );
+            if ( file.exists()){
+                fileExists = true;
+            }
+        }
+        if ( !fileExists){
+            //Use the current directory
+            dir = new File( ".").getAbsolutePath();
+            dir = dir.replaceAll( ".", "");
+            System.out.println( "Using current directory as write: "+dir);
+        }
+        else {
+            System.out.println( "Using user specified directory "+dir);
+        }
+        return dir;
     }
     
     /**

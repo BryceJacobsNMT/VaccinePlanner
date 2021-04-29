@@ -1,6 +1,6 @@
 Population: Unnamed
-Chronic Medical Condition Percent: 0.1
 Increased Risk Percent: 0.2
 Severe Illness Percent: 0.05
 Racial Mix: {OTHER=0.2, BLACK=0.2, ASIAN=0.2, WHITE=0.2, PACIFIC_ISLANDER=0.2}
 Age Mix: {MIDDLE_ADULT=0.2, LESS_THAN_YEAR=0.1, YOUNG_ADULT=0.1, ADULT=0.2, CHILD=0.2, OLDER_ADULT=0.1}
+Occupation: {HIGHER_EDUCATION=0.02, CHILD_CARE=0.04, FIRST_RESPONDER=0.02, HEALTHCARE=0.15, K_12_EDUCATOR=0.03}

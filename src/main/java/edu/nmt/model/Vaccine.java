@@ -34,4 +34,12 @@ public enum Vaccine {
         this.efficacies = efficacy;
         this.dosageInterval = dosageInterval;
     }  
+    
+    public int getRequiredDoses(){
+        return efficacies.size();
+    }
+    
+    public int getDaysBetweenDoses(){
+        return dosageInterval;
+    }
 }

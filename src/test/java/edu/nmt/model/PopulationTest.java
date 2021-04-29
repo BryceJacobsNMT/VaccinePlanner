@@ -37,7 +37,6 @@ public class PopulationTest {
     public void setUp() {
          //Create a population
         pop = new Population();
-        pop.setChronicMedicalConditionPercent(.1f);
         pop.setIncreasedRiskPercent(.2f);
         pop.setSevereIllnessPercent(.05f);
         final float FIXED_PERCENT = .2f;
@@ -57,6 +56,13 @@ public class PopulationTest {
         ageMix.put(AgeGroup.OLDER_ADULT, .1f );
         ageMix.put(AgeGroup.OLDER_ADULT, .1f );
         pop.setAgeMix( ageMix );
+        Map<Occupation,Float> occupationMix = new HashMap<>();
+        occupationMix.put(Occupation.HIGHER_EDUCATION, .02f);
+        occupationMix.put(Occupation.CHILD_CARE, .04f);
+        occupationMix.put(Occupation.HEALTHCARE, .15f);
+        occupationMix.put(Occupation.K_12_EDUCATOR, .03f);
+        occupationMix.put(Occupation.FIRST_RESPONDER, .02f);
+        pop.setOccupationMix( occupationMix );
         System.out.println( "Population is: "+pop);
     }
     

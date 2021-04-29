@@ -6,24 +6,25 @@
 package edu.nmt.model;
 
 /**
- *
+ * Represents a vaccination priority; ONE is the first group to get vaccinated.
  * @author bryce
  */
 public enum PriorityGroup {
-    ONE (1),
-    TWO (2),
-    THREE (3),
-    FOUR(4),
-    FIVE (5),
-    SIX(6),
-    SEVEN(7),
-    EIGHT(8),
-    NINE(9),
-    TEN(10);
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    FIVE,
+    SIX,
+    SEVEN,
+    EIGHT,
+    NINE,
+    TEN;
     
-    private final int ordering;
+    private PriorityGroup(){
+    }
     
-    private PriorityGroup( int order ){
-        ordering = order;
+    public static PriorityGroup getDefault(){
+        return TEN;
     }
 }

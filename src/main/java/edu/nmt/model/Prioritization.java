@@ -47,11 +47,46 @@ public class Prioritization {
     
     public Prioritization(){
         occupationPriority = new HashMap<>();
+        initOccupationPriorityDefaults();
         increasedRiskPriority = new HashMap<>();
+        initIncreasedRiskPriorityDefaults();
         severeIllnessPriority = new HashMap<>();
+        initSevereIllnessPriorityDefaults();
         racialPriority = new HashMap<>();
+        initRacialPriorityDefaults();
         agePriority = new HashMap<>();
+        initAgePriorityDefaults();
         name = ObjectUtility.DEFAULT_NAME;
+    }
+    
+    private void initOccupationPriorityDefaults(){
+        for ( Occupation occ : Occupation.values()){
+            occupationPriority.put(occ, PriorityGroup.TEN);
+        }
+    }
+    
+     private void initIncreasedRiskPriorityDefaults(){
+        for ( IncreasedRisk risk : IncreasedRisk.values()){
+            increasedRiskPriority.put(risk, PriorityGroup.TEN);
+        }
+    }
+    
+      private void initSevereIllnessPriorityDefaults(){
+        for ( SevereIllness si : SevereIllness.values()){
+            severeIllnessPriority.put(si, PriorityGroup.TEN);
+        }
+    }
+      
+      private void initRacialPriorityDefaults(){
+        for ( RacialCategory rc : RacialCategory.values()){
+            racialPriority.put(rc, PriorityGroup.TEN);
+        }
+    }
+      
+      private void initAgePriorityDefaults(){
+        for ( AgeGroup ac : AgeGroup.values()){
+            agePriority.put(ac, PriorityGroup.TEN);
+        }
     }
     
     public long getId(){
@@ -70,6 +105,31 @@ public class Prioritization {
         return name;
     }
     
+    public PriorityGroup getPriority( Person person ){
+        PriorityGroup group = PriorityGroup.getDefault();
+        PriorityGroup personAgePriority = agePriority.get(person.getAgeGroup() );
+        if ( personAgePriority.ordinal() < group.ordinal()){
+            group = personAgePriority;
+        }
+        PriorityGroup personOccPriority = occupationPriority.get(person.getOccupation());
+        if ( personOccPriority.ordinal() < group.ordinal()){
+            group = personOccPriority;
+        }
+        PriorityGroup severeIllPriority = severeIllnessPriority.get(person.getSevereIllness());
+        if ( severeIllPriority.ordinal() < group.ordinal()){
+            group = severeIllPriority;
+        }
+        PriorityGroup personRacePriority = this.racialPriority.get(person.getRacialCategory());
+        if ( personRacePriority.ordinal() < group.ordinal()){
+            group = personRacePriority;
+        }
+        PriorityGroup personRiskPriority = increasedRiskPriority.get(person.getIncreasedRisk());
+        if ( personRiskPriority.ordinal() < group.ordinal()){
+            group = personRiskPriority;
+        }
+        return group;
+    }
+    
     public Map<Occupation,PriorityGroup> getOccupationPriority(){
         return occupationPriority;
     }
@@ -84,26 +144,31 @@ public class Prioritization {
     
     public void setIncreasedRiskPriority( Map<IncreasedRisk,PriorityGroup> riskPriority ){
         increasedRiskPriority.clear();
+        initIncreasedRiskPriorityDefaults();
         increasedRiskPriority.putAll( riskPriority );
     }
     
     public void setOccupationPriority( Map<Occupation,PriorityGroup> occPriority ){
         occupationPriority.clear();
+        initOccupationPriorityDefaults();
         occupationPriority.putAll( occPriority );
     }
     
     public void setSevereIllnessPriority( Map<SevereIllness,PriorityGroup> sevPriority ){
         severeIllnessPriority.clear();
+        initSevereIllnessPriorityDefaults();
         severeIllnessPriority.putAll( sevPriority );
     }
     
     public void setRacialPriority( Map<RacialCategory,PriorityGroup> racGroup ){
         racialPriority.clear();
+        initRacialPriorityDefaults();
         racialPriority.putAll( racGroup );
     }
     
     public void setAgePriority( Map<AgeGroup,PriorityGroup> ageGroup ){
         agePriority.clear();
+        initAgePriorityDefaults();
         agePriority.putAll( ageGroup );
     }
     

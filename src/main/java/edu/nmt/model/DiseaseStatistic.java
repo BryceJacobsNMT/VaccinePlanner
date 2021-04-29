@@ -116,6 +116,15 @@ public class DiseaseStatistic {
         return build.toString();
     }
     
+    public static DiseaseStatistic getDefault(){
+        DiseaseStatistic stat = new DiseaseStatistic();
+        stat.setSpreadRate(0.3f);
+        stat.setInfectionRate( 0.02f);
+        stat.setHospitalizationRate( 0.15f);
+        stat.setDeathRate(0.25f);
+        return stat;
+    }
+    
     /**
      * Constructs a disease statistic from a textual representation.
      * @param statString - a textual description of a disease statistic.
