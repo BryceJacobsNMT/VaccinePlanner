@@ -5,14 +5,13 @@
  */
 package edu.nmt.view;
 
-import edu.nmt.model.Vaccine;
-import edu.nmt.model.VaccineAvailabilityModelContinuous;
 import edu.nmt.model.VaccineDelivery;
+import edu.nmt.util.IOUtility;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -37,6 +36,8 @@ public class VaccineDeliveryPanel extends JPanel{
         //database.
         fileText = new JTextField();
         fileText.setColumns(30);
+        URL defaultURL = VaccineDeliveryPanel.class.getClassLoader().getResource( IOUtility.VACC_FILE);
+        fileText.setText( defaultURL.getPath() );
         JButton chooseButton = new JButton( "From File...");
         chooseButton.addActionListener((ActionEvent ae) -> {
             JFileChooser chooser = new JFileChooser();
@@ -46,15 +47,27 @@ public class VaccineDeliveryPanel extends JPanel{
             if ( result == JFileChooser.APPROVE_OPTION ){
                 String fileName = chooser.getSelectedFile().getName();
                 fileText.setText( fileName );
-                VaccineDelivery vd = getDeliveryFromFile( fileName );
-                if ( vd != null ){
-                    deliveryChanged( vd );
-                }
+                fileChanged();
             }
         });
         add( deliveryLabel );
         add( fileText );
         add( chooseButton );
+    }
+    
+     /**
+     * Update the UI with the new file name.
+     */
+    public void fileChanged() {
+        String fileName = fileText.getText();
+        File vdFile = new File(fileName);
+        VaccineDelivery vd = IOUtility.getVaccineDeliveryFromFile(vdFile);
+        if (vd != null) {
+            deliveryChanged(vd);
+        } 
+        else {
+            System.out.println("Could not read vaccine delivery file: " + fileName);
+        }
     }
     
     /**
@@ -75,24 +88,5 @@ public class VaccineDeliveryPanel extends JPanel{
         deliveryListeners.forEach((pl) -> {
             pl.deliveryChanged( newDelivery );
         });
-    }
-    
-    /**
-     * Parses a text file to return a vaccine delivery model.
-     * @param fileName - the name of the file to read.
-     * @return - the disease described in the file.
-     */
-    //Note:  Until a sample text file can be provided for parsing, a sample disease will be
-    //hard-coded for the purpose of producing results.
-    public static VaccineDelivery getDeliveryFromFile( String fileName){
-        //Create a VaccineDelivery
-        VaccineDelivery vd = new VaccineDelivery();
-        
-        Map<Vaccine, VaccineAvailabilityModelContinuous> vaccineAvailability = new HashMap<>();
-        VaccineAvailabilityModelContinuous mod = new VaccineAvailabilityModelContinuous();
-        mod.setInitialAmount( 250 );
-        vaccineAvailability.put( Vaccine.MODERNA, mod);
-        vd.setVaccineDeliveryAvailability( vaccineAvailability);
-        return vd;
     }
 }

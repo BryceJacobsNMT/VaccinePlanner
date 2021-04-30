@@ -35,7 +35,6 @@ public class Grapher {
      * Constructor.
      */
     private Grapher(){
-        
     }
     
     /**
@@ -116,7 +115,7 @@ public class Grapher {
         for ( Vaccine vac : availMap.keySet()){
             XYSeries vaccineSupply = new XYSeries( vac);
             for ( int i = 1; i <= dayCount; i++ ){
-                vaccineSupply.add( i, availMap.get(vac).getDoses( i ) );
+                vaccineSupply.add( availMap.get(vac).getDoses( i ), i );
             }
         
             //Add the vaccine supply to the data in the graph           

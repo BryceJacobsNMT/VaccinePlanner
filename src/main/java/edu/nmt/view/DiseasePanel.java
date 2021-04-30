@@ -6,16 +6,12 @@
 package edu.nmt.view;
 
 import edu.nmt.model.Disease;
-import edu.nmt.model.DiseaseStatistic;
-import edu.nmt.model.IncreasedRisk;
-import edu.nmt.model.Occupation;
-import edu.nmt.model.RacialCategory;
-import edu.nmt.model.SevereIllness;
+import edu.nmt.util.IOUtility;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -33,6 +29,9 @@ public class DiseasePanel extends JPanel{
     
     private JTextField fileText;
     
+    /**
+     * Constructor.
+     */
     public DiseasePanel(){
         diseaseListeners = new ArrayList<>();
         JLabel diseaseLabel = new JLabel( "Disease:");
@@ -40,6 +39,8 @@ public class DiseasePanel extends JPanel{
         //database.
         fileText = new JTextField();
         fileText.setColumns(30);
+        URL defaultURL = DiseasePanel.class.getClassLoader().getResource( IOUtility.DIS_FILE);
+        fileText.setText( defaultURL.getPath() );
         JButton chooseButton = new JButton( "From File...");
         chooseButton.addActionListener((ActionEvent ae) -> {
             JFileChooser chooser = new JFileChooser();
@@ -49,15 +50,27 @@ public class DiseasePanel extends JPanel{
             if ( result == JFileChooser.APPROVE_OPTION ){
                 String fileName = chooser.getSelectedFile().getName();
                 fileText.setText( fileName );
-                Disease dis = getDiseaseFromFile( fileName );
-                if ( dis != null ){
-                    diseaseChanged( dis );
-                }
+                fileChanged();
             }
         });
         add( diseaseLabel );
         add( fileText );
         add( chooseButton );
+    }
+    
+    /**
+     * Update the UI with the new file name.
+     */
+    public void fileChanged() {
+        String fileName = fileText.getText();
+        File disFile = new File(fileName);
+        Disease dis = IOUtility.getDiseaseFromFile(disFile);
+        if (dis != null) {
+            diseaseChanged(dis);
+        }
+        else {
+            System.out.println( "Could not get disease from file: "+fileName);
+        }
     }
     
     /**
@@ -78,56 +91,5 @@ public class DiseasePanel extends JPanel{
         diseaseListeners.forEach((pl) -> {
             pl.diseaseChanged( newDisease );
         });
-    }
-    
-    /**
-     * Parses a text file to return a disease.
-     * @param fileName - the name of the file to read.
-     * @return - the disease described in the file.
-     */
-    //Note:  Until a sample text file can be provided for parsing, a sample disease will be
-    //hard-coded for the purpose of producing results.
-    public static Disease getDiseaseFromFile( String fileName){
-          //Create a disease
-        Disease dis = new Disease();
-        
-        Map<Occupation,DiseaseStatistic> occDisease = new HashMap<>();
-        DiseaseStatistic ds = makeDiseaseStatistic( 0.01f, .15f, .2f, .2f );
-        occDisease.put(Occupation.CITY, ds);
-        ds = makeDiseaseStatistic( 0.015f, .13f, .19f, .22f );
-        occDisease.put(Occupation.FINANCIAL_SERVICE, ds);
-        ds = makeDiseaseStatistic( 0.008f, .12f, .3f, .25f );
-        occDisease.put(Occupation.CONSTRUCTION, ds);
-        dis.setOccupationDisease( occDisease );
-       
-        Map<IncreasedRisk,DiseaseStatistic> incDisease = new HashMap<>();
-        ds = makeDiseaseStatistic( 0.02f, .15f, .2f, .2f );
-        incDisease.put(IncreasedRisk.ASTHMA, ds);
-        ds = makeDiseaseStatistic( 0.03f, .13f, .11f, .1f );
-        incDisease.put(IncreasedRisk.CYSTIC_FIBROSIS, ds);
-        dis.setIncreasedRiskDisease(incDisease);
-      
-        Map<SevereIllness,DiseaseStatistic> sevDisease = new HashMap<>();
-        ds = makeDiseaseStatistic( 0.04f, .15f, .15f, .2f );
-        sevDisease.put(SevereIllness.CANCER, ds);
-        ds = makeDiseaseStatistic( 0.05f, .13f, .13f, .1f );
-        sevDisease.put(SevereIllness.SMOKING, ds);
-        dis.setSevereIllnessDisease(sevDisease);
-   
-        Map<RacialCategory,DiseaseStatistic> racDisease = new HashMap<>();
-        ds = makeDiseaseStatistic( 0.01f, .15f, .17f, .1f );
-        racDisease.put(RacialCategory.BLACK, ds);
-        ds = makeDiseaseStatistic( 0.005f, .13f, .11f, .12f );
-        racDisease.put(RacialCategory.INDIAN, ds);
-        dis.setRacialDisease(racDisease);
-        return dis;   
-    }
-    
-    private static DiseaseStatistic makeDiseaseStatistic( float deathRate, float hospRate, float infectRate, float spreadRate ){
-        DiseaseStatistic ds = new DiseaseStatistic();
-        ds.setDeathRate( .01f );
-        ds.setHospitalizationRate( .15f );
-        ds.setInfectionRate( 0.2f );
-        return ds;
     }
 }

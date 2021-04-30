@@ -239,8 +239,10 @@ public class Prioritization {
                 String[] pairs = ObjectUtility.mapParse( occStr );
                 Map<Occupation, PriorityGroup> occPriors = new HashMap<>();
                 for (String pair : pairs) {
-                    String[] parts = pair.split("=");
-                    occPriors.put(Occupation.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    if ( pair.contains( "")){
+                        String[] parts = pair.split("=");
+                        occPriors.put(Occupation.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    }
                 }
                 prior.setOccupationPriority(occPriors);
             } 
@@ -254,8 +256,10 @@ public class Prioritization {
                 String[] pairs = ObjectUtility.mapParse( riskStr );
                 Map<IncreasedRisk, PriorityGroup> riskPriors = new HashMap<>();
                 for (String pair : pairs) {
-                    String[] parts = pair.split("=");
-                    riskPriors.put(IncreasedRisk.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    if ( pair.contains( "=")){
+                        String[] parts = pair.split("=");
+                        riskPriors.put(IncreasedRisk.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    }
                 }
                 prior.setIncreasedRiskPriority(riskPriors);
             } 
@@ -268,8 +272,10 @@ public class Prioritization {
                 String[] pairs = ObjectUtility.mapParse( illStr );
                 Map<SevereIllness, PriorityGroup> illPriors = new HashMap<>();
                 for (String pair : pairs) {
-                    String[] parts = pair.split("=");
-                    illPriors.put(SevereIllness.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    if ( pair.contains( "=")){
+                        String[] parts = pair.split("=");
+                        illPriors.put(SevereIllness.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    }
                 }
                 prior.setSevereIllnessPriority(illPriors);
             } 
@@ -282,8 +288,10 @@ public class Prioritization {
                 String[] pairs = ObjectUtility.mapParse( raceStr );
                 Map<RacialCategory, PriorityGroup> racePriors = new HashMap<>();
                 for (String pair : pairs) {
-                    String[] parts = pair.split("=");
-                    racePriors.put(RacialCategory.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    if ( pair.contains( "")){
+                        String[] parts = pair.split("=");
+                        racePriors.put(RacialCategory.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    }
                 }
                 prior.setRacialPriority(racePriors);
             } 
@@ -296,8 +304,10 @@ public class Prioritization {
                 String[] pairs = ObjectUtility.mapParse( ageStr );
                 Map<AgeGroup, PriorityGroup> agePriors = new HashMap<>();
                 for (String pair : pairs) {
-                    String[] parts = pair.split("=");
-                    agePriors.put(AgeGroup.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    if ( pair.contains( "=")){
+                        String[] parts = pair.split("=");
+                        agePriors.put(AgeGroup.valueOf(parts[0].trim()), PriorityGroup.valueOf(parts[1].trim()));
+                    }
                 }
                 prior.setAgePriority(agePriors);
             } 

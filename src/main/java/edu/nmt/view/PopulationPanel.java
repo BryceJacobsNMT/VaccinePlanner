@@ -5,14 +5,13 @@
  */
 package edu.nmt.view;
 
-import edu.nmt.model.AgeGroup;
 import edu.nmt.model.Population;
-import edu.nmt.model.RacialCategory;
+import edu.nmt.util.IOUtility;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -36,7 +35,9 @@ public class PopulationPanel extends JPanel{
         //For now the design appears to be to read from a file rather than using the
         //database.
         fileText = new JTextField();
+        URL defaultURL = PopulationPanel.class.getClassLoader().getResource( IOUtility.POP_FILE);
         fileText.setColumns(30);
+        fileText.setText(defaultURL.getPath());
         JButton chooseButton = new JButton( "From File...");
         chooseButton.addActionListener((ActionEvent ae) -> {
             JFileChooser chooser = new JFileChooser();
@@ -45,16 +46,28 @@ public class PopulationPanel extends JPanel{
             int result = chooser.showOpenDialog( null );
             if ( result == JFileChooser.APPROVE_OPTION ){
                 String fileName = chooser.getSelectedFile().getName();
-                fileText.setText( fileName );
-                Population pop = getPopulationFromFile( fileName );
-                if ( pop != null ){
-                    populationChanged( pop );
-                }
+                fileText.setText(fileName);
+                fileChanged();
             }
         });
         add( populationLabel );
         add( fileText );
         add( chooseButton );
+    }
+    
+    /**
+     * Update the UI with the new file name.
+     */
+    public void fileChanged() {
+        String fileName = fileText.getText();
+        File popFile = new File(fileName);
+        Population pop = IOUtility.getPopulationFromFile(popFile);
+        if (pop != null) {
+            populationChanged(pop);
+        } 
+        else {
+            System.out.println("Could not read population file: " + fileName);
+        }
     }
     
     /**
@@ -72,39 +85,8 @@ public class PopulationPanel extends JPanel{
      * @param newPop 
      */
     public void populationChanged( Population newPop ){
-        for ( PopulationListener pl : popListeners ){
+        popListeners.forEach((pl) -> {
             pl.populationChanged( newPop );
-        }
-    }
-    
-    /**
-     * Parses a text file to return a population.
-     * @param fileName - the name of the file to read.
-     * @return - the population described in the file.
-     */
-    //Note:  Until a sample text file can be provided for parsing, a sample population will be
-    //hard-coded for the purpose of producing results.
-    public static Population getPopulationFromFile( String fileName){
-        Population pop = new Population();
-        pop.setIncreasedRiskPercent(.2f);
-        pop.setSevereIllnessPercent(.05f);
-        final float FIXED_PERCENT = .2f;
-        Map<RacialCategory,Float> racialMix = new HashMap<>();
-        racialMix.put(RacialCategory.ASIAN, FIXED_PERCENT );
-        racialMix.put(RacialCategory.BLACK, FIXED_PERCENT );
-        racialMix.put(RacialCategory.OTHER, FIXED_PERCENT );
-        racialMix.put(RacialCategory.PACIFIC_ISLANDER, FIXED_PERCENT );
-        racialMix.put(RacialCategory.WHITE, FIXED_PERCENT );
-        pop.setRacialMix(racialMix );
-        Map<AgeGroup,Float> ageMix = new HashMap<>();
-        ageMix.put(AgeGroup.CHILD,FIXED_PERCENT );
-        ageMix.put(AgeGroup.ADULT, FIXED_PERCENT );
-        ageMix.put(AgeGroup.MIDDLE_ADULT, FIXED_PERCENT );
-        ageMix.put(AgeGroup.LESS_THAN_YEAR, .1f);
-        ageMix.put(AgeGroup.YOUNG_ADULT, .1f);
-        ageMix.put(AgeGroup.OLDER_ADULT, .1f );
-        ageMix.put(AgeGroup.OLDER_ADULT, .1f );
-        pop.setAgeMix( ageMix );
-        return pop;
+        });
     }
 }

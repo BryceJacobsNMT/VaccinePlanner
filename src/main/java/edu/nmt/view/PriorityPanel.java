@@ -5,17 +5,13 @@
  */
 package edu.nmt.view;
 
-import edu.nmt.model.AgeGroup;
-import edu.nmt.model.IncreasedRisk;
-import edu.nmt.model.Occupation;
 import edu.nmt.model.Prioritization;
-import edu.nmt.model.PriorityGroup;
-import edu.nmt.model.SevereIllness;
+import edu.nmt.util.IOUtility;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -40,6 +36,8 @@ public class PriorityPanel extends JPanel{
         //database.
         fileText = new JTextField();
         fileText.setColumns(30);
+        URL defaultURL = PriorityPanel.class.getClassLoader().getResource( IOUtility.PRIOR_FILE);
+        fileText.setText( defaultURL.getPath() );
         JButton chooseButton = new JButton( "From File...");
         chooseButton.addActionListener((ActionEvent ae) -> {
             JFileChooser chooser = new JFileChooser();
@@ -49,15 +47,27 @@ public class PriorityPanel extends JPanel{
             if ( result == JFileChooser.APPROVE_OPTION ){
                 String fileName = chooser.getSelectedFile().getName();
                 fileText.setText( fileName );
-                Prioritization priority = getPriorityFromFile( fileName );
-                if ( priority != null ){
-                    priorityChanged( priority );
-                }
-            }
+                fileChanged();
+           }
         });
         add( priorityLabel );
         add( fileText );
         add( chooseButton );
+    }
+    
+    /**
+     * Update the UI with the new file name.
+     */
+    public void fileChanged() {
+        String fileName = fileText.getText();
+        File priorFile = new File(fileName);
+        Prioritization priority = IOUtility.getPrioritizationFromFile(priorFile);
+        if (priority != null) {
+            priorityChanged(priority);
+        }
+        else {
+            System.out.println( "Could not get prioritization from file: "+fileName);
+        }
     }
     
     /**
@@ -78,41 +88,5 @@ public class PriorityPanel extends JPanel{
         priorityListeners.forEach((pl) -> {
             pl.priorityChanged( newPriority );
         });
-    }
-    
-    /**
-     * Parses a text file to return a prioritization.
-     * @param fileName - the name of the file to read.
-     * @return - the disease described in the file.
-     */
-    //Note:  Until a sample text file can be provided for parsing, a sample prioritization will be
-    //hard-coded for the purpose of producing results.
-    public static Prioritization getPriorityFromFile( String fileName){
-        Prioritization prior = new Prioritization();
-        
-        Map<Occupation, PriorityGroup> occupationPriority = new HashMap<>();
-        occupationPriority.put( Occupation.CONSTRUCTION, PriorityGroup.EIGHT );
-        occupationPriority.put( Occupation.COUNTY, PriorityGroup.SIX);
-        occupationPriority.put( Occupation.CITY, PriorityGroup.FIVE );
-        prior.setOccupationPriority( occupationPriority );
-        
-        Map<IncreasedRisk, PriorityGroup> increasedRiskPriority = new HashMap<>();
-        increasedRiskPriority.put( IncreasedRisk.LIVER_DISEASE, PriorityGroup.THREE );
-        increasedRiskPriority.put( IncreasedRisk.PULMONARY_FIBROSIS, PriorityGroup.FOUR );
-        increasedRiskPriority.put( IncreasedRisk.THALASSEMIA, PriorityGroup.FIVE );
-        prior.setIncreasedRiskPriority( increasedRiskPriority );
-        
-        Map<SevereIllness,PriorityGroup> severeIllnessPriority = new HashMap<>();
-        severeIllnessPriority.put( SevereIllness.CANCER, PriorityGroup.TWO );
-        severeIllnessPriority.put( SevereIllness.SICKLE_CELL_DISEASE, PriorityGroup.THREE );
-        severeIllnessPriority.put( SevereIllness.SMOKING, PriorityGroup.SEVEN );
-        prior.setSevereIllnessPriority( severeIllnessPriority );
-        
-        Map<AgeGroup, PriorityGroup> agePriority = new HashMap<>();
-        agePriority.put( AgeGroup.ADULT, PriorityGroup.FOUR );
-        agePriority.put( AgeGroup.MIDDLE_ADULT, PriorityGroup.FIVE );
-        agePriority.put( AgeGroup.OLDER_ADULT, PriorityGroup.THREE );
-        prior.setAgePriority( agePriority );
-        return prior;
     }
 }

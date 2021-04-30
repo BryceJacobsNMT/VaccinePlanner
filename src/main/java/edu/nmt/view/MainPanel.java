@@ -46,8 +46,7 @@ public class MainPanel {
         frame.setResizable( false );
         frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         frame.setTitle( "Vaccine Planner");
-        
-        
+           
         JTabbedPane tabPane = new JTabbedPane(JTabbedPane.TOP);
         
         PopulationPanel popPanel = new PopulationPanel();
@@ -68,6 +67,12 @@ public class MainPanel {
         priorPanel.addPriorityChangeListener( resPanel );
         devPanel.addDeliveryChangeListener( resPanel );
         tabPane.addTab( "Results", null, resPanel, "Displays Results");
+        
+        //Initialize with default results.
+        popPanel.fileChanged();
+        disPanel.fileChanged();
+        priorPanel.fileChanged();
+        devPanel.fileChanged();
        
         frame.getContentPane().setLayout( new GridLayout(1,1));
         frame.getContentPane().add(tabPane );    

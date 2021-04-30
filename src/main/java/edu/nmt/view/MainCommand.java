@@ -13,13 +13,14 @@ import edu.nmt.model.Prediction;
 import edu.nmt.model.Prioritization;
 import edu.nmt.model.Statistics;
 import edu.nmt.model.VaccineDelivery;
+import edu.nmt.util.IOUtility;
+import static edu.nmt.util.IOUtility.getPopulationFromFile;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,11 +35,6 @@ import org.jfree.chart.JFreeChart;
  * @author bryce
  */
 public class MainCommand {
-    
-    private static final String POP_FILE = "SamplePopulation.txt";
-    private static final String DIS_FILE = "SampleDisease.txt";
-    private static final String VACC_FILE = "SampleVaccineDelivery.txt";
-    private static final String PRIOR_FILE = "SamplePrioritization.txt";
     
     /**
      * Entry point
@@ -175,12 +171,12 @@ public class MainCommand {
         //If the user specified a file try to use that.
         if ( userSpecifiedPopFileName != null ){
             File popFile = new File( userSpecifiedPopFileName );
-            pop = getPopulationFromFile( popFile );
+            pop = IOUtility.getPopulationFromFile( popFile );
         }
        
         //We were either unable to read the user specified input file or one was not specified.
         if ( pop == null ){
-            URL mainURL = MainCommand.class.getClassLoader().getResource( POP_FILE );           
+            URL mainURL = MainCommand.class.getClassLoader().getResource( IOUtility.POP_FILE );           
             if ( mainURL.getProtocol().equals("jar")){
                 pop = initializePopulationFromJar();
             }
@@ -202,7 +198,7 @@ public class MainCommand {
      * @return - a Population.
      */
     public static Population initializePopulationFromJar() {
-        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(POP_FILE);
+        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(IOUtility.POP_FILE);
         Population pop = new Population();
         if ( input != null ){
             String popStr;
@@ -265,20 +261,20 @@ public class MainCommand {
         //If the user specified a file try to use that.
         if ( userSpecifiedFileName != null ){
             File disFile = new File( userSpecifiedFileName );
-            dis = getDiseaseFromFile( disFile );
+            dis = IOUtility.getDiseaseFromFile( disFile );
         }
        
         //We were either unable to read the user specified input file or one was not specified.
         if ( dis == null ){
             System.out.println( "No user specified file; using default");
-            URL mainURL = MainCommand.class.getClassLoader().getResource( DIS_FILE);
+            URL mainURL = MainCommand.class.getClassLoader().getResource( IOUtility.DIS_FILE);
             if ( mainURL.getProtocol().equals("jar")){
                 dis = initializeDiseaseFromJar();
             }
             else {
                 System.out.println( "Main URL path is "+mainURL.getPath());
                 File disFile = new File( mainURL.getPath());
-                dis = getDiseaseFromFile( disFile );
+                dis = IOUtility.getDiseaseFromFile( disFile );
             }
             
         }
@@ -293,7 +289,7 @@ public class MainCommand {
      * @return - a Disease.
      */
     public static Disease initializeDiseaseFromJar() {
-        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(DIS_FILE);
+        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(IOUtility.DIS_FILE);
         Disease dis = new Disease();
         if ( input != null ){
             String popStr;
@@ -335,20 +331,20 @@ public class MainCommand {
         //If the user specified a file try to use that.
         if ( userSpecifiedFileName != null ){
             File disFile = new File( userSpecifiedFileName );
-            prior = getPrioritizationFromFile( disFile );
+            prior = IOUtility.getPrioritizationFromFile( disFile );
         }
        
         //We were either unable to read the user specified input file or one was not specified.
         if ( prior == null ){
             System.out.println( "No user specified file; using default");
-            URL mainURL = MainCommand.class.getClassLoader().getResource( PRIOR_FILE);
+            URL mainURL = MainCommand.class.getClassLoader().getResource( IOUtility.PRIOR_FILE);
             if ( mainURL.getProtocol().equals("jar")){
                 prior = initializePrioritizationFromJar();
             }
             else {
                 System.out.println( "Main URL path is "+mainURL.getPath());
                 File priorFile = new File( mainURL.getPath());
-                prior = getPrioritizationFromFile( priorFile );
+                prior = IOUtility.getPrioritizationFromFile( priorFile );
             }
             
         }
@@ -363,7 +359,7 @@ public class MainCommand {
      * @return - a Prioritization.
      */
     public static Prioritization initializePrioritizationFromJar() {
-        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(PRIOR_FILE);
+        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(IOUtility.PRIOR_FILE);
         Prioritization prior = new Prioritization();
         if ( input != null ){
             String popStr;
@@ -405,20 +401,20 @@ public class MainCommand {
         //If the user specified a file try to use that.
         if ( userSpecifiedFileName != null ){
             File vdFile = new File( userSpecifiedFileName );
-            vd = getVaccineDeliveryFromFile( vdFile );
+            vd = IOUtility.getVaccineDeliveryFromFile( vdFile );
         }
        
         //We were either unable to read the user specified input file or one was not specified.
         if ( vd == null ){
             System.out.println( "No user specified file; using default");
-            URL mainURL = MainCommand.class.getClassLoader().getResource( VACC_FILE);
+            URL mainURL = MainCommand.class.getClassLoader().getResource( IOUtility.VACC_FILE);
             if ( mainURL.getProtocol().equals("jar")){
                 vd = initializeVaccineDeliveryFromJar();
             }
             else {
                 System.out.println( "Main URL path is "+mainURL.getPath());
                 File vdFile = new File( mainURL.getPath());
-                vd = getVaccineDeliveryFromFile( vdFile );
+                vd = IOUtility.getVaccineDeliveryFromFile( vdFile );
             }         
         }
         else {
@@ -432,7 +428,7 @@ public class MainCommand {
      * @return - a VaccineDelivery.
      */
     public static VaccineDelivery initializeVaccineDeliveryFromJar() {
-        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(VACC_FILE);
+        InputStream input = MainCommand.class.getClassLoader().getResourceAsStream(IOUtility.VACC_FILE);
         VaccineDelivery vd = new VaccineDelivery();
         if ( input != null ){
             String popStr;
@@ -459,92 +455,10 @@ public class MainCommand {
         return vd;
     }
     
-    /**
-     * Constructs a population from a text file.
-     * @param popFile - a text file specifying a population.
-     * @return - the corresponding population.
-     */
-    private static Population getPopulationFromFile( File popFile ){
-        Population pop = null;
-         if ( popFile.exists() ){
-            String fileContents = readFile( popFile );
-            if ( !fileContents.isEmpty() || !fileContents.isBlank() ){
-            
-                pop = Population.fromString( fileContents );
-            }
-        }
-        return pop;     
-    }
+   
     
     
-     /**
-     * Constructs a disease from a text file.
-     * @param disFile - a text file specifying a disease.
-     * @return - the corresponding disease.
-     */
-    private static Disease getDiseaseFromFile( File disFile ){
-        Disease dis = null;
-         if ( disFile.exists() ){
-            String fileContents = readFile( disFile );
-            if ( !fileContents.isEmpty() || !fileContents.isBlank() ){
-            
-                dis = Disease.fromString( fileContents );
-            }
-        }
-        return dis;     
-    }
+ 
     
-    /**
-     * Constructs a prioritization from a text file.
-     * @param priorFile - a text file specifying a prioritization.
-     * @return - the corresponding prioritization.
-     */
-    private static Prioritization getPrioritizationFromFile( File priorFile ){
-        Prioritization prior = null;
-         if ( priorFile.exists() ){
-            String fileContents = readFile( priorFile );
-            if ( !fileContents.isEmpty() || !fileContents.isBlank() ){
-            
-                prior = Prioritization.fromString( fileContents );
-            }
-        }
-        return prior;     
-    }
-    
-    /**
-     * Constructs a vaccine delivery from a text file.
-     * @param vdFile - a text file specifying vaccine delivery.
-     * @return - the corresponding vaccine delivery.
-     */
-    private static VaccineDelivery getVaccineDeliveryFromFile( File vdFile ){
-        VaccineDelivery vd = null;
-         if ( vdFile.exists() ){
-            String fileContents = readFile( vdFile );
-            if ( !fileContents.isEmpty() || !fileContents.isBlank() ){
-            
-                vd = VaccineDelivery.fromString( fileContents );
-            }
-        }
-        return vd;     
-    }
-    
-    /**
-     * Reads a file containing text.
-     * @param file - the file to read.
-     * @return - the text content of the file.
-     */
-    private static String readFile( File file ){
-        StringBuilder fileContents = new StringBuilder();
-        try 
-            (BufferedReader in = new BufferedReader( new FileReader( file ))){
-            String str;
-            while ((str = in.readLine()) != null ){
-                fileContents.append( str ).append("\n");
-            }
-        }
-        catch( IOException ioe ){
-            System.out.println( "Could not print file: "+file.getAbsolutePath()+ioe);
-        }
-        return fileContents.toString();
-    }
+  
 }
