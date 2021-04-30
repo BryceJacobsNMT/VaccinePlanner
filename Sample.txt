@@ -1,0 +1,3 @@
+Population  Sick  Recovered Vaccinated
+100000    3000  2000    2000
+100000    3000  2000    10000
