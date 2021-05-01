@@ -22,7 +22,7 @@ java -cp pathToJar/VaccinePlanner-1.1-jar-with-dependencies.jar edu.nmt.view.Mai
 
 Of course, the -P option can be left out to use the default population file and/or other options could be added (see above).
 
-
+The R script can be run through command line by "Rscript SIR.R <inputfile> <days>"
 ############################################################################
 #  Original Implementation Using a Postgres Database
 ############################################################################
